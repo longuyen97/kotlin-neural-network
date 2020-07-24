@@ -1,11 +1,12 @@
 package de.longuyen
 
 import org.nd4j.linalg.factory.Nd4j
+import java.io.FileOutputStream
+import java.io.ObjectOutputStream
 
 
 fun main() {
-
-    val x = Nd4j.zeros(3, 4)
+    val x = Nd4j.zeros(4, 4)
     println(x)
 
     val ranks = x.rank()
@@ -20,5 +21,9 @@ fun main() {
 
     val dt = x.dataType()
     println(dt)
-}
 
+    FileOutputStream("target/test.ser").use{
+        val os = ObjectOutputStream(it)
+        os.writeObject(x)
+    }
+}

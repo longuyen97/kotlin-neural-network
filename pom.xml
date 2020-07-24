@@ -62,9 +62,9 @@
             <version>1.0.0-beta7</version>
         </dependency>
         <dependency>
-            <groupId>commons-io</groupId>
-            <artifactId>commons-io</artifactId>
-            <version>2.6</version>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-csv</artifactId>
+            <version>1.5</version>
         </dependency>
         <dependency>
             <groupId>com.github.sarxos</groupId>
