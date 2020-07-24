@@ -1,14 +1,13 @@
 package de.longuyen.data
 
-import org.apache.commons.csv.CSVParser
-import org.nd4j.linalg.api.ndarray.INDArray
+
 
 enum class DataType {
     REGRESSION,
     CLASSIFICATION
 }
 
-enum class DataColumn(index: Int, dataType: DataType) {
+enum class HousePriceDataAttributes(val index: Int, val dataType: DataType, val target: Boolean = false) {
     Id(0, DataType.REGRESSION),
     MSSubClass(1, DataType.CLASSIFICATION),
     MSZoning(2, DataType.CLASSIFICATION),
@@ -87,18 +86,7 @@ enum class DataColumn(index: Int, dataType: DataType) {
     MiscValMoSold(75, DataType.REGRESSION),
     MoSold(76, DataType.REGRESSION),
     YrSold(77, DataType.REGRESSION),
-    SaleType(77, DataType.CLASSIFICATION),
-    SaleCondition(78, DataType.CLASSIFICATION),
-    SalePrice(79, DataType.REGRESSION)
-}
-
-
-interface DataParser {
-    fun parse(csvReader: CSVParser): INDArray
-}
-
-class HousePriceDataParser : DataParser{
-    override fun parse(csvReader: CSVParser): INDArray {
-        TODO("Not yet implemented")
-    }
+    SaleType(78, DataType.CLASSIFICATION),
+    SaleCondition(79, DataType.CLASSIFICATION),
+    SalePrice(80, DataType.REGRESSION, true)
 }
