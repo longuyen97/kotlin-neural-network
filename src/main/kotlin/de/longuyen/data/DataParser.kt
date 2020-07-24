@@ -19,214 +19,78 @@ enum class DataColumn(index: Int, dataType: DataType) {
     LotShape(7, DataType.CLASSIFICATION),
     LandContour(8, DataType.CLASSIFICATION),
     Utilities(9, DataType.CLASSIFICATION),
-    const val LotConfig = 10
-    const val LandSlope = 11
-    const val Neighborhood = 12
-    const val Condition1 = 13
-    const val Condition2 = 14
-    const val BldgType = 15
-    const val HouseStyle = 16
-    const val OverallQual = 17
-    const val OverallCond = 18
-
-    /**
-     * Original construction date
-     */
-    const val YearBuilt = 19
-    const val YearRemodAdd = 20
-    const val RoofStyle = 21
-    const val RoofMatl = 22
-    const val Exterior1st = 23
-    const val Exterior2nd = 24
-    const val MasVnrType = 25
-    const val MasVnrArea = 26
-    const val ExterQual = 27
-    const val ExterCond = 28
-    const val Foundation = 29
-    const val BsmtQual = 30
-    const val BsmtCond = 31
-    const val BsmtExposure = 32
-    const val BsmtFinType1 = 33
-    const val BsmtFinSF1 = 34
-    const val BsmtFinType2 = 35
-    const val BsmtFinSF2 = 36
-    const val BsmtUnfSF = 37
-    const val TotalBsmtSF = 38
-    const val Heating = 39
-    const val HeatingQC = 40
-    const val CentralAir = 41
-    const val Electrical = 42
-
-    /**
-     * First Floor square feet
-     */
-    const val t1stFlrSF = 43
-
-    /**
-     * Second floor square feet
-     */
-    const val t2ndFlrSF = 44
-    const val LowQualFinSF = 45
-    const val GrLivArea = 46
-    const val BsmtFullBath = 47
-    const val BsmtHalfBath = 48
-    const val FullBath = 49
-    const val HalfBath = 50
-    const val BedroomAbvGr = 51
-    const val KitchenAbvGr = 52
-    const val KitchenQual = 53
-    const val TotRmsAbvGrd = 54
-    const val Functional = 55
-    const val Fireplaces = 56
-    const val FireplaceQu = 57
-    const val GarageType = 58
-
-    /**
-     * Year garage was built
-     */
-    const val GarageYrBlt = 59
-    const val GarageFinish = 60
-    const val GarageCars = 61
-    const val GarageArea = 62
-    const val GarageQual = 63
-    const val GarageCond = 64
-    const val PavedDrive = 65
-    const val WoodDeckSF = 66
-    const val OpenPorchSF = 67
-    const val EnclosedPorch = 68
-    const val t3SsnPorch = 69
-    const val ScreenPorch = 70
-    const val PoolArea = 71
-    const val PoolQC = 72
-    const val Fence = 73
-    const val MiscFeature = 74
-
-    /**
-     * Month Sold
-     */
-    const val MiscValMoSold = 75
-
-    /**
-     * Year Sold
-     */
-    const val YrSold = 76
-    const val SaleType = 77
-    const val SaleCondition = 78
+    LotConfig(10, DataType.CLASSIFICATION),
+    LandSlope(11, DataType.CLASSIFICATION),
+    Neighborhood(12, DataType.CLASSIFICATION),
+    Condition1(13, DataType.CLASSIFICATION),
+    Condition2(14, DataType.CLASSIFICATION),
+    BldgType(15, DataType.CLASSIFICATION),
+    HouseStyle(16, DataType.CLASSIFICATION),
+    OverallQual(17, DataType.REGRESSION),
+    OverallCond(18, DataType.REGRESSION),
+    YearBuilt(19, DataType.REGRESSION),
+    YearRemodAdd (20, DataType.REGRESSION),
+    RoofStyle(21, DataType.CLASSIFICATION),
+    RoofMatl(22, DataType.CLASSIFICATION),
+    Exterior1st(23, DataType.CLASSIFICATION),
+    Exterior2nd(24, DataType.CLASSIFICATION),
+    MasVnrType(25, DataType.CLASSIFICATION),
+    MasVnrArea(26, DataType.REGRESSION),
+    ExterQual(27, DataType.CLASSIFICATION),
+    ExterCond (28, DataType.CLASSIFICATION),
+    Foundation(29, DataType.CLASSIFICATION),
+    BsmtQual(30, DataType.CLASSIFICATION),
+    BsmtCond(31, DataType.CLASSIFICATION),
+    BsmtExposure(32, DataType.CLASSIFICATION),
+    BsmtFinType1(33, DataType.CLASSIFICATION),
+    BsmtFinSF1(34, DataType.REGRESSION),
+    BsmtFinType2(35, DataType.CLASSIFICATION),
+    BsmtFinSF2(36, DataType.REGRESSION),
+    BsmtUnfSF(37, DataType.REGRESSION),
+    TotalBsmtSF(38, DataType.REGRESSION),
+    Heating(39, DataType.CLASSIFICATION),
+    HeatingQC(40, DataType.CLASSIFICATION),
+    CentralAir(41, DataType.CLASSIFICATION),
+    Electrical(42, DataType.CLASSIFICATION),
+    T1stFlrSF(43, DataType.REGRESSION),
+    T2ndFlrSF(44, DataType.REGRESSION),
+    LowQualFinSF(45, DataType.REGRESSION),
+    GrLivArea(46, DataType.REGRESSION),
+    BsmtFullBath(47, DataType.REGRESSION),
+    BsmtHalfBath(48, DataType.REGRESSION),
+    FullBath(49, DataType.REGRESSION),
+    HalfBath(50, DataType.REGRESSION),
+    BedroomAbvGr(51, DataType.REGRESSION),
+    KitchenAbvGr(52, DataType.REGRESSION),
+    KitchenQual(53, DataType.CLASSIFICATION),
+    TotRmsAbvGrd(54, DataType.REGRESSION),
+    Functional(55, DataType.CLASSIFICATION),
+    Fireplaces(56, DataType.REGRESSION),
+    FireplaceQu(57, DataType.CLASSIFICATION),
+    GarageType(58, DataType.CLASSIFICATION),
+    GarageYrBlt(59, DataType.REGRESSION),
+    GarageFinish(60, DataType.CLASSIFICATION),
+    GarageCars(61, DataType.REGRESSION),
+    GarageArea(62, DataType.REGRESSION),
+    GarageQual(63, DataType.CLASSIFICATION),
+    GarageCond(64, DataType.CLASSIFICATION),
+    PavedDrive(65, DataType.CLASSIFICATION),
+    WoodDeckSF(66, DataType.REGRESSION),
+    OpenPorchSF(67, DataType.REGRESSION),
+    EnclosedPorch(68, DataType.REGRESSION),
+    T3SsnPorch(69, DataType.REGRESSION),
+    ScreenPorch(70, DataType.REGRESSION),
+    PoolArea(71, DataType.REGRESSION),
+    PoolQC(72, DataType.CLASSIFICATION),
+    Fence(73, DataType.CLASSIFICATION),
+    MiscFeature(74, DataType.CLASSIFICATION),
+    MiscValMoSold(75, DataType.REGRESSION),
+    MoSold(76, DataType.REGRESSION),
+    YrSold(77, DataType.REGRESSION),
+    SaleType(77, DataType.CLASSIFICATION),
+    SaleCondition(78, DataType.CLASSIFICATION),
+    SalePrice(79, DataType.REGRESSION)
 }
-
-const val Id = 0
-const val MSSubClass = 1
-const val MSZoning = 2
-const val LotFrontage = 3
-
-/**
- *  Lot size in square feet
- */
-const val LotArea = 4
-const val Street = 5
-const val Alley = 6
-const val LotShape = 7
-const val LandContour = 8
-const val Utilities = 9
-const val LotConfig = 10
-const val LandSlope = 11
-const val Neighborhood = 12
-const val Condition1 = 13
-const val Condition2 = 14
-const val BldgType = 15
-const val HouseStyle = 16
-const val OverallQual = 17
-const val OverallCond = 18
-
-/**
- * Original construction date
- */
-const val YearBuilt = 19
-const val YearRemodAdd = 20
-const val RoofStyle = 21
-const val RoofMatl = 22
-const val Exterior1st = 23
-const val Exterior2nd = 24
-const val MasVnrType = 25
-const val MasVnrArea = 26
-const val ExterQual = 27
-const val ExterCond = 28
-const val Foundation = 29
-const val BsmtQual = 30
-const val BsmtCond = 31
-const val BsmtExposure = 32
-const val BsmtFinType1 = 33
-const val BsmtFinSF1 = 34
-const val BsmtFinType2 = 35
-const val BsmtFinSF2 = 36
-const val BsmtUnfSF = 37
-const val TotalBsmtSF = 38
-const val Heating = 39
-const val HeatingQC = 40
-const val CentralAir = 41
-const val Electrical = 42
-
-/**
- * First Floor square feet
- */
-const val t1stFlrSF = 43
-
-/**
- * Second floor square feet
- */
-const val t2ndFlrSF = 44
-const val LowQualFinSF = 45
-const val GrLivArea = 46
-const val BsmtFullBath = 47
-const val BsmtHalfBath = 48
-const val FullBath = 49
-const val HalfBath = 50
-const val BedroomAbvGr = 51
-const val KitchenAbvGr = 52
-const val KitchenQual = 53
-const val TotRmsAbvGrd = 54
-const val Functional = 55
-const val Fireplaces = 56
-const val FireplaceQu = 57
-const val GarageType = 58
-
-/**
- * Year garage was built
- */
-const val GarageYrBlt = 59
-const val GarageFinish = 60
-const val GarageCars = 61
-const val GarageArea = 62
-const val GarageQual = 63
-const val GarageCond = 64
-const val PavedDrive = 65
-const val WoodDeckSF = 66
-const val OpenPorchSF = 67
-const val EnclosedPorch = 68
-const val t3SsnPorch = 69
-const val ScreenPorch = 70
-const val PoolArea = 71
-const val PoolQC = 72
-const val Fence = 73
-const val MiscFeature = 74
-
-/**
- * Month Sold
- */
-const val MiscValMoSold = 75
-
-/**
- * Year Sold
- */
-const val YrSold = 76
-const val SaleType = 77
-const val SaleCondition = 78
-
-/**
- * the property's sale price in dollars. This is the target variable that you're trying to predict.
- *
- */
-const val SalePrice = 79
 
 
 interface DataParser {

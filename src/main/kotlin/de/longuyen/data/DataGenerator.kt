@@ -13,22 +13,3 @@ interface DataGenerator {
 
     fun getTestingData(): INDArray
 }
-
-class HousePriceDataGenerator : DataGenerator{
-    fun getData(inputStream: InputStream) : INDArray {
-        InputStreamReader(inputStream).use {
-            val csvParser = CSVParser(it, CSVFormat.DEFAULT)
-
-            return Nd4j.zeros(3, 3)
-        }
-    }
-
-    override fun getTrainingData(): INDArray {
-        return this.getData(javaClass.getResourceAsStream("/train.csv"))
-    }
-
-    override fun getTestingData(): INDArray {
-        return this.getData(javaClass.getResourceAsStream("/test.csv"))
-    }
-
-}
