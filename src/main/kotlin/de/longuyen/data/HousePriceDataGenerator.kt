@@ -2,14 +2,13 @@ package de.longuyen.data
 
 import org.apache.commons.csv.CSVFormat
 import org.apache.commons.csv.CSVParser
-import org.nd4j.linalg.api.ndarray.INDArray
-import org.nd4j.linalg.factory.Nd4j
 import java.io.InputStreamReader
 
 /**
  * Data generator for the dataset Boston House price.
  */
 class HousePriceDataGenerator : DataGenerator {
+
     /**
      * Undertake the task of parsing the raw csv file into a Map.
      * For the map we assume the keys are the indices of each attribute in the CSV table
@@ -23,14 +22,18 @@ class HousePriceDataGenerator : DataGenerator {
         val returnValue = HashMap<Int, MutableList<String>>()
 
         // Iterate each record in the CSV
+        var skipped = false
         for (csvRecord in csvReader) {
-            // Iterate each value of the record
-            for (attribute in HousePriceDataAttributes.values()) {
-                if ((training && attribute.target) || !attribute.target) {
-                    if (!returnValue.containsKey(attribute.index)) {
-                        returnValue[attribute.index] = mutableListOf()
+            if(!skipped){
+                skipped = true
+            }else {
+                for (attribute in HousePriceDataAttributes.values()) {
+                    if ((training && attribute.target) || !attribute.target) {
+                        if (!returnValue.containsKey(attribute.index)) {
+                            returnValue[attribute.index] = mutableListOf()
+                        }
+                        returnValue[attribute.index]!!.add(csvRecord.get(attribute.index))
                     }
-                    returnValue[attribute.index]!!.add(csvRecord.get(attribute.index))
                 }
             }
         }
@@ -42,24 +45,39 @@ class HousePriceDataGenerator : DataGenerator {
         return returnValue
     }
 
-    override fun getTrainingData(): Pair<INDArray, INDArray> {
+    /**
+     * Obtain the training data of the house price dataset
+     */
+    override fun getTrainingData(): Map<Int, MutableList<String>> {
         javaClass.getResourceAsStream("/train.csv").use { inputStream ->
             InputStreamReader(inputStream).use {inputStreamReader ->
                 val csvParser = CSVParser(inputStreamReader, CSVFormat.DEFAULT)
-                val csvData = readRawCsvToMap(csvParser, true)
-                return Pair(Nd4j.zeros(3, 3), Nd4j.ones(3, 3))
+                return readRawCsvToMap(csvParser, true)
             }
         }
     }
 
-    override fun getTestingData(): INDArray {
+    /**
+     * Obtain the testing data of the house price dataset
+     */
+    override fun getTestingData(): Map<Int, MutableList<String>> {
         javaClass.getResourceAsStream("/test.csv").use { inputStream ->
             InputStreamReader(inputStream).use {inputStreamReader ->
                 val csvParser = CSVParser(inputStreamReader, CSVFormat.DEFAULT)
-                val csvData = readRawCsvToMap(csvParser, false)
-                return Nd4j.zeros(3, 3)
+                return readRawCsvToMap(csvParser, false)
             }
         }
     }
 
+    /**
+     * Obtain the testing data of the house price dataset
+     */
+    override fun getValidatingData(): Map<Int, MutableList<String>> {
+        javaClass.getResourceAsStream("/validation.csv").use { inputStream ->
+            InputStreamReader(inputStream).use {inputStreamReader ->
+                val csvParser = CSVParser(inputStreamReader, CSVFormat.DEFAULT)
+                return readRawCsvToMap(csvParser, false)
+            }
+        }
+    }
 }

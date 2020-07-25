@@ -8,14 +8,17 @@ import org.nd4j.linalg.api.ndarray.INDArray
  */
 interface DataGenerator {
     /**
-     * Generating training pair.
-     * First element of the pair is the training attributes
-     * Second element of the pair is the training result
+     * Generating training data
      */
-    fun getTrainingData(): Pair<INDArray, INDArray>
+    fun getTrainingData(): Map<Int, MutableList<String>>
 
     /**
-     * Generating testing tensor without result
+     * Generating testing data
      */
-    fun getTestingData(): INDArray
+    fun getTestingData(): Map<Int, MutableList<String>>
+
+    /**
+     * Generating  training data for unit testing purpose
+     */
+    fun getValidatingData(): Map<Int, MutableList<String>>
 }
