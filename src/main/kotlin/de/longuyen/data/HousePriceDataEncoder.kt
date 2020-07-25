@@ -94,8 +94,13 @@ fun encodeDiscreteAttributes(dataFrame: MutableMap<Int, MutableList<String>>): M
                 }()
 
                 for (value in dataFrame[attributeIndex]!!) {
-                    assert(oneHotEncodeMap.containsKey(value))
-                    oneHotEncodes[segmentIndexMap[value]!!].add("${oneHotEncodeMap[value]!!}")
+                    for(oneHotIndex in oneHotEncodes.indices){
+                        if(oneHotIndex == segmentIndexMap[value]!!){
+                            oneHotEncodes[oneHotIndex].add("1")
+                        }else{
+                            oneHotEncodes[oneHotIndex].add("0")
+                        }
+                    }
                 }
 
                 for(segmentKey in segmentIndexMap.keys){
@@ -135,22 +140,31 @@ fun normalizeContinuousAttributes(dataFrame: MutableMap<Int, MutableList<String>
                 val numericList = mutableListOf<Double>()
                 for(str in dataFrame[attributeIndex]!!) {
                     try {
-                        numericList.add(str.toDouble())
-                    }catch (e: Exception){
-                        println("$attributeIndex: ${indexToAttributeMap[attributeIndex]!!}")
-                        throw e
+                        val value = str.toDouble()
+                        numericList.add(value)
+                    }catch (e: NumberFormatException){
+                        numericList.add(0.0)
                     }
                 }
                 val min = numericList.min()!!
                 val max = numericList.max()!!
-                for(index in numericList.indices){
-                    numericList[index] = (numericList[index] - min) / (max - min)
+
+                if(max > min) {
+                    for (index in numericList.indices) {
+                        numericList[index] = (numericList[index] - min) / (max - min)
+                    }
+                }else if(max == min){
+                    for (index in numericList.indices) {
+                        numericList[index] = 1.0
+                    }
                 }
                 val stringList = mutableListOf<String>()
                 for(num in numericList){
                     stringList.add("$num")
                 }
                 dataFrame[attributeIndex] = stringList
+
+                returnValue[attributeIndex] = ContinuousAttributesCode(attributeIndex, min, max)
             }
         }
     }
