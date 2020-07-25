@@ -2,19 +2,36 @@ package de.longuyen.data
 
 import org.nd4j.linalg.api.ndarray.INDArray
 import org.nd4j.linalg.factory.Nd4j
-import java.lang.Exception
-import java.util.*
-import kotlin.collections.HashMap
 
 
+/**
+ * Class for bringing the house price dataset in the correct form.
+ * The dataset contains continuous and discrete data
+ * The continuous data column can be kept, but the data itself needs to be normalized to between 0.0 and 1.0
+ * The discrete data column must be deleted. Before deletion, the data must be one hot encoded.
+ * Each column of the one hot encoding matrix will be inserted into the data frame.
+ *
+ * The object of this class will associated wiith one and only one dataset. The object can be serialized and deserialized
+ * for serving the model. Incoming data must be processed for the inference to happen.
+ *
+ * @param dataFrame the orignal data. Will be edited inplace.
+ */
 class HousePriceDataEncoder(dataFrame: Map<Int, MutableList<String>>) : DataEncoder(dataFrame) {
-    private var discreteMapping: MutableMap<Int, DiscreteAttributesCode> = HashMap()
-    private var continuousMapping: MutableMap<Int, ContinuousAttributesCode> = HashMap()
+    // The one hot encoding information for encoding future data
+    val discreteMapping: MutableMap<Int, DiscreteAttributesCode>
+
+    // The information of min / max data for future scaling
+    val continuousMapping: MutableMap<Int, ContinuousAttributesCode>
+
+    // The original dataset. Encoded
+    private val encoded: MutableMap<Int, MutableList<String>> = this.dataFrame.toMutableMap()
 
     init {
-        val encoded = this.dataFrame.toMutableMap()
-        this.discreteMapping = encodeDiscreteAttributes(encoded)
-        this.continuousMapping = normalizeContinuousAttributes(encoded)
+        if(this.encoded.containsKey(HousePriceDataAttributes.Id.index)){
+            this.encoded.remove(HousePriceDataAttributes.Id.index)
+        }
+        this.discreteMapping = encodeDiscreteAttributes(this.encoded)
+        this.continuousMapping = normalizeContinuousAttributes(this.encoded)
     }
 
     override fun encode(): Pair<INDArray, INDArray> {
@@ -26,6 +43,10 @@ class HousePriceDataEncoder(dataFrame: Map<Int, MutableList<String>>) : DataEnco
     }
 }
 
+/**
+ * In place discrete features encoding
+ * @return the information for future encoding
+ */
 fun encodeDiscreteAttributes(dataFrame: MutableMap<Int, MutableList<String>>): MutableMap<Int, DiscreteAttributesCode> {
     val returnValue = HashMap<Int, DiscreteAttributesCode>()
 
@@ -113,8 +134,10 @@ fun encodeDiscreteAttributes(dataFrame: MutableMap<Int, MutableList<String>>): M
     return returnValue
 }
 
-
-
+/**
+ * In place continuous features scaling
+ * @return the information for future scaling
+ */
 fun normalizeContinuousAttributes(dataFrame: MutableMap<Int, MutableList<String>>): MutableMap<Int, ContinuousAttributesCode> {
     val returnValue = HashMap<Int, ContinuousAttributesCode>()
 
@@ -137,15 +160,20 @@ fun normalizeContinuousAttributes(dataFrame: MutableMap<Int, MutableList<String>
 
             // Check if the column exists in the hard coded enum class for house price dataset's attributes
             if (indexToAttributeMap[attributeIndex]!!.dataType == DataType.CONTINUOUS) {
+
+                // Convert the data of the current column into numeric data for scaling
                 val numericList = mutableListOf<Double>()
                 for(str in dataFrame[attributeIndex]!!) {
                     try {
                         val value = str.toDouble()
                         numericList.add(value)
                     }catch (e: NumberFormatException){
+                        assert(str == "NA")
                         numericList.add(0.0)
                     }
                 }
+
+                // Find the min and max value of the column
                 val min = numericList.min()!!
                 val max = numericList.max()!!
 
@@ -158,12 +186,15 @@ fun normalizeContinuousAttributes(dataFrame: MutableMap<Int, MutableList<String>
                         numericList[index] = 1.0
                     }
                 }
+
+                // Reconvert the numeric data back to string
                 val stringList = mutableListOf<String>()
                 for(num in numericList){
                     stringList.add("$num")
                 }
                 dataFrame[attributeIndex] = stringList
 
+                // Replace the original column with the scaled column
                 returnValue[attributeIndex] = ContinuousAttributesCode(attributeIndex, min, max)
             }
         }
