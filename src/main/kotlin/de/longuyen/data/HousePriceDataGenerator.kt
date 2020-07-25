@@ -27,6 +27,8 @@ class HousePriceDataGenerator : DataGenerator {
             if(!skipped){
                 skipped = true
             }else {
+
+                // Convert each column of a row into the map
                 for (attribute in HousePriceDataAttributes.values()) {
                     if ((training && attribute.target) || !attribute.target) {
                         if (!returnValue.containsKey(attribute.index)) {
@@ -35,8 +37,11 @@ class HousePriceDataGenerator : DataGenerator {
                         returnValue[attribute.index]!!.add(csvRecord.get(attribute.index))
                     }
                 }
+
             }
         }
+
+        // Sanity test
         if(!training) {
             assert(returnValue.size == HousePriceDataAttributes.values().size - 1) { "Expecting raw data to have ${HousePriceDataAttributes.values().size - 1} columns. Instead got ${returnValue.size} columns" }
         }else{
@@ -76,7 +81,7 @@ class HousePriceDataGenerator : DataGenerator {
         javaClass.getResourceAsStream("/validation.csv").use { inputStream ->
             InputStreamReader(inputStream).use {inputStreamReader ->
                 val csvParser = CSVParser(inputStreamReader, CSVFormat.DEFAULT)
-                return readRawCsvToMap(csvParser, false)
+                return readRawCsvToMap(csvParser, true)
             }
         }
     }

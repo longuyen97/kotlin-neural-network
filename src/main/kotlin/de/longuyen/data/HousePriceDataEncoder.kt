@@ -2,6 +2,7 @@ package de.longuyen.data
 
 import org.nd4j.linalg.api.ndarray.INDArray
 import org.nd4j.linalg.factory.Nd4j
+import kotlin.collections.HashMap
 
 
 /**
@@ -24,10 +25,10 @@ class HousePriceDataEncoder(dataFrame: Map<Int, MutableList<String>>) : DataEnco
     val continuousMapping: MutableMap<Int, ContinuousAttributesCode>
 
     // The original dataset. Encoded
-    private val encoded: MutableMap<Int, MutableList<String>> = this.dataFrame.toMutableMap()
+    val encoded: MutableMap<Int, MutableList<String>> = this.dataFrame.toMutableMap()
 
     init {
-        if(this.encoded.containsKey(HousePriceDataAttributes.Id.index)){
+        if (this.encoded.containsKey(HousePriceDataAttributes.Id.index)) {
             this.encoded.remove(HousePriceDataAttributes.Id.index)
         }
         this.discreteMapping = encodeDiscreteAttributes(this.encoded)
@@ -35,11 +36,56 @@ class HousePriceDataEncoder(dataFrame: Map<Int, MutableList<String>>) : DataEnco
     }
 
     override fun encode(): Pair<INDArray, INDArray> {
-        TODO("Not yet implemented")
+        // Convert the value of the target column to a 2D double list
+        val target ={
+            val ret = mutableListOf<Double>()
+            for(value in this.encoded[HousePriceDataAttributes.SalePrice.index]!!){
+                ret.add(value.toDouble())
+            }
+            mutableListOf(ret)
+        } ()
+
+        // Convert the value of the 2D double list to a 2D double array
+        val targetNdArray = {
+            val ret = DoubleArray(target[0].size)
+            for(i in target[0].indices) {
+                ret[i] = target[0][i]
+            }
+            arrayOf(ret)
+        }()
+
+        return Pair(encode(encoded), Nd4j.createFromArray(targetNdArray))
     }
 
     override fun encode(dataFrame: Map<Int, MutableList<String>>): INDArray {
-        return Nd4j.zeros(3, 3)
+        val features = {
+            val ret = mutableListOf<MutableList<Double>>()
+            for (key in dataFrame.keys) {
+                if (key != HousePriceDataAttributes.SalePrice.index) {
+                    val column = mutableListOf<Double>()
+                    for(value in dataFrame[key]!!){
+                        column.add(value.toDouble())
+                    }
+                    ret.add(column)
+                }
+            }
+            ret
+        }()
+
+        val featuresNdarray = {
+            val ret = arrayOfNulls<DoubleArray>(features.size)
+            for(featureColumnIndex in features.indices){
+                val featureColumn = features[featureColumnIndex]
+                val colArray = DoubleArray(featureColumn.size)
+                for(cellIndex in featureColumn.indices){
+                    colArray[cellIndex] = featureColumn[cellIndex]
+                }
+                ret[featureColumnIndex] = colArray
+            }
+            ret
+        }()
+
+        return Nd4j.createFromArray(featuresNdarray)
     }
 }
 
@@ -115,16 +161,16 @@ fun encodeDiscreteAttributes(dataFrame: MutableMap<Int, MutableList<String>>): M
                 }()
 
                 for (value in dataFrame[attributeIndex]!!) {
-                    for(oneHotIndex in oneHotEncodes.indices){
-                        if(oneHotIndex == segmentIndexMap[value]!!){
+                    for (oneHotIndex in oneHotEncodes.indices) {
+                        if (oneHotIndex == segmentIndexMap[value]!!) {
                             oneHotEncodes[oneHotIndex].add("1")
-                        }else{
+                        } else {
                             oneHotEncodes[oneHotIndex].add("0")
                         }
                     }
                 }
 
-                for(segmentKey in segmentIndexMap.keys){
+                for (segmentKey in segmentIndexMap.keys) {
                     dataFrame[oneHotEncodeMap[segmentKey]!!] = oneHotEncodes[segmentIndexMap[segmentKey]!!]
                 }
                 dataFrame.remove(attributeIndex)
@@ -163,11 +209,11 @@ fun normalizeContinuousAttributes(dataFrame: MutableMap<Int, MutableList<String>
 
                 // Convert the data of the current column into numeric data for scaling
                 val numericList = mutableListOf<Double>()
-                for(str in dataFrame[attributeIndex]!!) {
+                for (str in dataFrame[attributeIndex]!!) {
                     try {
                         val value = str.toDouble()
                         numericList.add(value)
-                    }catch (e: NumberFormatException){
+                    } catch (e: NumberFormatException) {
                         assert(str == "NA")
                         numericList.add(0.0)
                     }
@@ -177,11 +223,11 @@ fun normalizeContinuousAttributes(dataFrame: MutableMap<Int, MutableList<String>
                 val min = numericList.min()!!
                 val max = numericList.max()!!
 
-                if(max > min) {
+                if (max > min) {
                     for (index in numericList.indices) {
                         numericList[index] = (numericList[index] - min) / (max - min)
                     }
-                }else if(max == min){
+                } else if (max == min) {
                     for (index in numericList.indices) {
                         numericList[index] = 1.0
                     }
@@ -189,7 +235,7 @@ fun normalizeContinuousAttributes(dataFrame: MutableMap<Int, MutableList<String>
 
                 // Reconvert the numeric data back to string
                 val stringList = mutableListOf<String>()
-                for(num in numericList){
+                for (num in numericList) {
                     stringList.add("$num")
                 }
                 dataFrame[attributeIndex] = stringList
