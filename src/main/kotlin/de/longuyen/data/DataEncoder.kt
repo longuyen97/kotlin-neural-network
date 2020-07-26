@@ -28,7 +28,8 @@ abstract class DataEncoder(val dataFrame: Map<Int, MutableList<String>>) {
     abstract fun encode(): Pair<INDArray, INDArray>
 
     /**
-     * Encode the input parameter @param dataFrame
+     * Encode future data with current data encoder
+     * The method should only called after the class was initialized
      */
-    abstract fun encode(dataFrame: Map<Int, MutableList<String>>): INDArray
+    abstract fun encodeFutureData(dataFrame: Map<Int, MutableList<String>>): INDArray
 }

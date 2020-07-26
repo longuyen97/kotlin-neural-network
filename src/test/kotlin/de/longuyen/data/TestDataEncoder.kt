@@ -62,15 +62,31 @@ class TestDataEncoder {
     @Test
     fun `test methode encode`() {
         val dataGenerator = HousePriceDataGenerator()
-        val valData = dataGenerator.getTrainingData().toMutableMap()
-        assertTrue(valData.containsKey(HousePriceDataAttributes.SalePrice.index))
-        val dataEncoder = HousePriceDataEncoder(valData)
+        val trainingData = dataGenerator.getTrainingData().toMutableMap()
+        assertTrue(trainingData.containsKey(HousePriceDataAttributes.SalePrice.index))
+        val dataEncoder = HousePriceDataEncoder(trainingData)
         assertTrue(dataEncoder.encoded.containsKey(HousePriceDataAttributes.SalePrice.index))
         val data = dataEncoder.encode()
         assertTrue(Arrays.equals(data.first.shape(), longArrayOf(318, 1460)))
         assertTrue(Arrays.equals(data.second.shape(), longArrayOf(1, 1460)))
-        assertEquals(data.first.shape()[1], valData[valData.keys.first()]!!.size.toLong())
-        assertEquals(data.second.shape()[1], valData[valData.keys.first()]!!.size.toLong())
+        assertEquals(data.first.shape()[1], trainingData[trainingData.keys.first()]!!.size.toLong())
+        assertEquals(data.second.shape()[1], trainingData[trainingData.keys.first()]!!.size.toLong())
         assertEquals(data.first.shape()[0], dataEncoder.encoded.size.toLong() - 1)
+    }
+
+    @Test
+    fun `test methode encode with testing data`(){
+        val dataGenerator = HousePriceDataGenerator()
+        val trainingData = dataGenerator.getTrainingData().toMutableMap()
+        val testingData = dataGenerator.getTestingData().toMutableMap()
+        val valData = dataGenerator.getValidatingData().toMutableMap()
+
+        assertTrue(trainingData.containsKey(HousePriceDataAttributes.SalePrice.index))
+        val dataEncoder = HousePriceDataEncoder(trainingData)
+        assertTrue(dataEncoder.encoded.containsKey(HousePriceDataAttributes.SalePrice.index))
+        val testingNdarray = dataEncoder.encodeFutureData(testingData)
+        assertTrue(Arrays.equals(testingNdarray.shape(), longArrayOf(318, 1459)))
+        val validatingNdarray = dataEncoder.encodeFutureData(valData)
+        assertTrue(Arrays.equals(validatingNdarray.shape(), longArrayOf(318, 1)))
     }
 }

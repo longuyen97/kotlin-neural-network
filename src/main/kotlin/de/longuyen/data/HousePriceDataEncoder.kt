@@ -4,7 +4,6 @@ import org.nd4j.linalg.api.ndarray.INDArray
 import org.nd4j.linalg.factory.Nd4j
 import kotlin.collections.HashMap
 
-
 /**
  * Class for bringing the house price dataset in the correct form.
  * The dataset contains continuous and discrete data
@@ -37,33 +36,30 @@ class HousePriceDataEncoder(dataFrame: Map<Int, MutableList<String>>) : DataEnco
 
     override fun encode(): Pair<INDArray, INDArray> {
         // Convert the value of the target column to a 2D double list
-        val target ={
+        val target = {
             val ret = mutableListOf<Double>()
-            for(value in this.encoded[HousePriceDataAttributes.SalePrice.index]!!){
+            for (value in this.encoded[HousePriceDataAttributes.SalePrice.index]!!) {
                 ret.add(value.toDouble())
             }
             mutableListOf(ret)
-        } ()
+        }()
 
         // Convert the value of the 2D double list to a 2D double array
         val targetNdArray = {
             val ret = DoubleArray(target[0].size)
-            for(i in target[0].indices) {
+            for (i in target[0].indices) {
                 ret[i] = target[0][i]
             }
             arrayOf(ret)
         }()
 
-        return Pair(encode(encoded), Nd4j.createFromArray(targetNdArray))
-    }
-
-    override fun encode(dataFrame: Map<Int, MutableList<String>>): INDArray {
+        // Convert the value of the features columns to a 2D double list
         val features = {
             val ret = mutableListOf<MutableList<Double>>()
-            for (key in dataFrame.keys) {
+            for (key in encoded.keys) {
                 if (key != HousePriceDataAttributes.SalePrice.index) {
                     val column = mutableListOf<Double>()
-                    for(value in dataFrame[key]!!){
+                    for (value in encoded[key]!!) {
                         column.add(value.toDouble())
                     }
                     ret.add(column)
@@ -72,12 +68,87 @@ class HousePriceDataEncoder(dataFrame: Map<Int, MutableList<String>>) : DataEnco
             ret
         }()
 
+        // Convert the value of the target column to a 2D array
         val featuresNdarray = {
             val ret = arrayOfNulls<DoubleArray>(features.size)
-            for(featureColumnIndex in features.indices){
+            for (featureColumnIndex in features.indices) {
                 val featureColumn = features[featureColumnIndex]
                 val colArray = DoubleArray(featureColumn.size)
-                for(cellIndex in featureColumn.indices){
+                for (cellIndex in featureColumn.indices) {
+                    colArray[cellIndex] = featureColumn[cellIndex]
+                }
+                ret[featureColumnIndex] = colArray
+            }
+            ret
+        }()
+
+        return Pair(Nd4j.createFromArray(featuresNdarray), Nd4j.createFromArray(targetNdArray))
+    }
+
+    override fun encodeFutureData(dataFrame: Map<Int, MutableList<String>>): INDArray {
+        val outputMap = dataFrame.toMutableMap()
+        outputMap.remove(HousePriceDataAttributes.Id.index)
+
+        // Map each discrete column to an encoding object
+        val keySet = this.discreteMapping.keys.toSet()
+        for (discreteKey in keySet) {
+            if (!outputMap.containsKey(discreteKey)) {
+                throw RuntimeException("Error. The future data does not contain the column $discreteKey")
+            }
+
+            // Encoding object
+            // Map each value of this discrete column to a new column
+            val oneHotCodes = this.discreteMapping[discreteKey]!!.oneHotEncoded
+            val oneHotSubArray = mutableMapOf<String, MutableList<String>>()
+            for (entry in oneHotCodes.entries) {
+                oneHotSubArray[entry.key] = mutableListOf()
+            }
+            for (value in outputMap[discreteKey]!!) {
+                for (entry in oneHotSubArray.entries) {
+                    if (entry.key == value) {
+                        entry.value.add("1")
+                    } else {
+                        entry.value.add("0")
+                    }
+                }
+            }
+
+            // Merge the one hot sub array into the main data frame
+            val discreteEncode = discreteMapping[discreteKey]!!
+            for (entry in discreteEncode.oneHotEncoded.entries) {
+                outputMap[entry.value] = oneHotSubArray[entry.key]!!
+            }
+
+            // Remove the original discrete
+            outputMap.remove(discreteKey)
+        }
+
+        // Convert the value of the features columns to a 2D double list
+        val features = {
+            val ret = mutableListOf<MutableList<Double>>()
+            for (key in outputMap.keys) {
+                if (key != HousePriceDataAttributes.SalePrice.index) {
+                    val column = mutableListOf<Double>()
+                    for (value in outputMap[key]!!) {
+                        try {
+                            column.add(value.toDouble())
+                        } catch (e: NumberFormatException) {
+                            column.add(0.0)
+                        }
+                    }
+                    ret.add(column)
+                }
+            }
+            ret
+        }()
+
+        // Convert the value of the target column to a 2D array
+        val featuresNdarray = {
+            val ret = arrayOfNulls<DoubleArray>(features.size)
+            for (featureColumnIndex in features.indices) {
+                val featureColumn = features[featureColumnIndex]
+                val colArray = DoubleArray(featureColumn.size)
+                for (cellIndex in featureColumn.indices) {
                     colArray[cellIndex] = featureColumn[cellIndex]
                 }
                 ret[featureColumnIndex] = colArray
