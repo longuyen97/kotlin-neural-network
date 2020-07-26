@@ -1,7 +1,5 @@
 package de.longuyen.trainer
 
-import de.longuyen.core.Model
-import de.longuyen.core.NeuronalNetwork
 import de.longuyen.data.DataEncoder
 import de.longuyen.data.DataGenerator
 import de.longuyen.data.HousePriceDataEncoder
@@ -15,7 +13,7 @@ class HousePriceModelTrainer {
     init {
         dataEncoder = HousePriceDataEncoder(dataGenerator.getTrainingData())
     }
-    fun train() : Model{
+    fun train() {
         val dataGenerator = HousePriceDataGenerator()
         val trainingData = dataGenerator.getTrainingData()
         val testingData = dataGenerator.getTestingData()
@@ -23,8 +21,6 @@ class HousePriceModelTrainer {
         val dataEncoder = HousePriceDataEncoder(trainingData)
 
 
-        val model = NeuronalNetwork()
-        return model
     }
 
     fun getTrainingData() : Pair<INDArray, INDArray>{
