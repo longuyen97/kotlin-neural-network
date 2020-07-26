@@ -2,6 +2,7 @@ package de.longuyen.data
 
 import org.nd4j.linalg.api.ndarray.INDArray
 import org.nd4j.linalg.factory.Nd4j
+import java.io.Serializable
 import kotlin.collections.HashMap
 
 /**
@@ -16,7 +17,7 @@ import kotlin.collections.HashMap
  *
  * @param dataFrame the orignal data. Will be edited inplace.
  */
-class HousePriceDataEncoder(dataFrame: Map<Int, MutableList<String>>) : DataEncoder(dataFrame) {
+class HousePriceDataEncoder(dataFrame: Map<Int, MutableList<String>>) : DataEncoder(dataFrame), Serializable {
     // The one hot encoding information for encoding future data
     val discreteMapping: MutableMap<Int, DiscreteAttributesCode>
 

@@ -67,9 +67,9 @@
             <version>1.5</version>
         </dependency>
         <dependency>
-            <groupId>com.github.sarxos</groupId>
-            <artifactId>webcam-capture</artifactId>
-            <version>0.3.11</version>
+            <groupId>org.knowm.xchart</groupId>
+            <artifactId>xchart</artifactId>
+            <version>3.6.4</version>
         </dependency>
     </dependencies>
 

@@ -1,6 +1,7 @@
 package de.longuyen.data
 
 import org.nd4j.linalg.api.ndarray.INDArray
+import java.io.Serializable
 
 
 /**
@@ -8,7 +9,7 @@ import org.nd4j.linalg.api.ndarray.INDArray
  * @param index Indicates the original CSV column's index of the not encoded file. This original column will be removed after one hot encoding
  * @param oneHotEncoded Map each unique value in the column to a new index
  */
-data class DiscreteAttributesCode(val index: Int, val oneHotEncoded: Map<String, Int>)
+data class DiscreteAttributesCode(val index: Int, val oneHotEncoded: Map<String, Int>) : Serializable
 
 /**
  * Help class to memorize how the continuous attributes were encoded. Assuming the data in the column is continuous and can be compared
@@ -16,7 +17,7 @@ data class DiscreteAttributesCode(val index: Int, val oneHotEncoded: Map<String,
  * @param min minimal value of the column
  * @param max maximal value of the column
  */
-data class ContinuousAttributesCode(val index: Int, val min: Double, val max: Double)
+data class ContinuousAttributesCode(val index: Int, val min: Double, val max: Double) : Serializable
 
 /**
  * Interface for encoding data

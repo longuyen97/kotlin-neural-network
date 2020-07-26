@@ -3,11 +3,12 @@ package de.longuyen.data
 import org.apache.commons.csv.CSVFormat
 import org.apache.commons.csv.CSVParser
 import java.io.InputStreamReader
+import java.io.Serializable
 
 /**
  * Data generator for the dataset Boston House price.
  */
-class HousePriceDataGenerator : DataGenerator {
+class HousePriceDataGenerator : DataGenerator, Serializable {
 
     /**
      * Undertake the task of parsing the raw csv file into a Map.
