@@ -26,7 +26,7 @@ fun dRelu(x: INDArray) : INDArray {
 fun mae(yTrue: INDArray, yPrediction: INDArray) : INDArray {
     val diff = yPrediction.sub(yTrue)
     val absolute = Transforms.abs(diff)
-    return absolute.sum(true, 0).mean(true, 0).castTo(yTrue.dataType())
+    return absolute.sum(true, 0).mean()
 }
 
 fun dMae(yTrue: INDArray, yPrediction: INDArray) : INDArray {

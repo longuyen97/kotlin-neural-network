@@ -2,6 +2,7 @@ package de.longuyen
 
 import de.longuyen.trainer.dMae
 import de.longuyen.trainer.dRelu
+import de.longuyen.trainer.mae
 import de.longuyen.trainer.relu
 import org.nd4j.linalg.api.ndarray.INDArray
 import org.nd4j.linalg.factory.Nd4j
@@ -41,6 +42,7 @@ fun main() {
         activations["A${layers.size - 1}"] = logits["Z${layers.size - 1}"]!!.dup()
 
         logitGrads["dZ$hiddens"] = dMae(target, activations["A$hiddens"]!!)
+        val loss = mae(target, activations["A$hiddens"]!!)
 
         for (i in 1 until hiddens) {
             val activationGrad =
@@ -58,6 +60,14 @@ fun main() {
             parameterGrads["dW$i"] = logitGrads["dZ$i"]!!.mmul(activations["A${i - 1}"]!!.transpose())
             biasGrads["db$i"] = logitGrads["dZ$i"]!!.sum(true, 1)
         }
+
+        val learningRate = 0.001
+        for(i in 2 until layers.size) {
+            parameters["W$i"] = parameters["W$i"]!!.sub(parameterGrads["dW$i"]!!.mul(learningRate))
+            biases["b$i"] = biases["b$i"]!!.sub(biasGrads["db$i"]!!.mul(learningRate))
+        }
+
+        println("Epoch $epoch - Loss $loss")
     }
 }
 
