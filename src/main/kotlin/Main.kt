@@ -1,5 +1,3 @@
-package de.longuyen.visualization
-
 import de.longuyen.trainer.HousePriceModelTrainer
 import org.knowm.xchart.BitmapEncoder
 import org.knowm.xchart.XYChart
