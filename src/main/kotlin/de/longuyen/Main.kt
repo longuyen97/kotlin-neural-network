@@ -21,7 +21,8 @@ fun main() {
 
     val features = Nd4j.rand(*longArrayOf(10, 2))
     val target = Nd4j.rand(*longArrayOf(1, 2))
-    logits["Z1"] = (parameters["W1"]!!.mmul(features))
+
+    logits["Z1"] = (parameters["W1"]!!.mmul(features)).add(biases["b1"]!!)
     activations["A1"] = relu(logits["Z1"]!!)
 
     for(i in 2 until layers.size - 1){
@@ -34,14 +35,24 @@ fun main() {
     val activationGrads = mutableMapOf<String, INDArray>()
     val logitGrads = mutableMapOf<String, INDArray>()
 
-    logitGrads["dZ${layers.size - 1}"] = dMae(target, activations["A${layers.size - 1}"]!!)
+    val hiddens = layers.size - 1;
 
-    for(i in 1 until layers.size - 1){
-        val activationGrad = (parameters["W${layers.size - 1}"]!!.transpose()).mmul(logitGrads["dZ${layers.size - i}"]!!)
-        activationGrads["dA${layers.size - i - 1}"] = activationGrad
+    logitGrads["dZ$hiddens"] = dMae(target, activations["A$hiddens"]!!)
+
+    for(i in 1 until hiddens){
+        val activationGrad = (parameters["W${hiddens - i + 1}"]!!.transpose()).mmul(logitGrads["dZ${hiddens - i + 1}"]!!)
+        activationGrads["dA${hiddens - i}"] = activationGrad
 
 
-        val logitGrad = activationGrads["dA${layers.size - 1 - i}"]!!.mmul(dRelu(logits["Z${layers.size - 1 - i}"]!!))
-        logitGrads["dZ${layers.size - 1 - i}"] = logitGrad
+        val logitGrad = activationGrads["dA${hiddens - i}"]!!.mmul(dRelu(logits["Z${hiddens - i}"]!!))
+        logitGrads["dZ${hiddens - i}"] = logitGrad
     }
 }
+
+
+
+
+
+
+
+
