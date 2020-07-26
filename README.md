@@ -16,7 +16,7 @@ in this repository supports following features:
 - `XChart` for visualization.
 - `Nd4j` for linear algebra.
 
-### Initial performance evaluation
+### Performance evaluation for regression purpose
 
 The performance validation of the neuronal network was made on the advanced [House Price Dataset](https://www.kaggle.com/c/house-prices-advanced-regression-techniques).
 For the training purpose, the data of the dataset has to be processed. Each discrete column will be one-hot-encoded and each continuous-valued column will be 
