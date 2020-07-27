@@ -1,4 +1,4 @@
-package de.longuyen.data
+package de.longuyen.data.houseprice
 
 import org.junit.Test
 import kotlin.test.assertEquals

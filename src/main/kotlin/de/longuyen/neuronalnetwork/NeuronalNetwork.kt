@@ -1,17 +1,44 @@
 package de.longuyen.neuronalnetwork
 
+import de.longuyen.neuronalnetwork.activations.Activation
+import de.longuyen.neuronalnetwork.losses.LossFunction
 import org.nd4j.linalg.api.buffer.DataType
 import org.nd4j.linalg.api.ndarray.INDArray
 import org.nd4j.linalg.factory.Nd4j
 import java.io.Serializable
 
 
+/**
+ * Vectorized deep neuronal network for supervised machine learning.
+ *
+ * @param layers Notate how many input each layer of the network will become. The first element of the array is the number
+ * of the dataset's features. The last element of the array can be interpreted as the output of the network.
+ *
+ * @param hiddenActivation Each output of the hidden layers will be scaled with this function
+ *
+ * @param lastActivation Last output of the last hidden layer will be scaled with this function
+ *
+ * @param lossFunction Determined how the result of the network should be evaluated against a target.
+ */
 class NeuronalNetwork(private val layers: IntArray, private val hiddenActivation: Activation, private val lastActivation: Activation, private val lossFunction: LossFunction) : Serializable {
+    /*
+     * Intern parameters of the network
+     */
     private val parameters = mutableMapOf<String, INDArray>()
+
+    /*
+     * Bias for each layer of the network
+     */
     private val biases = mutableMapOf<String, INDArray>()
-    private val hiddens = layers.size - 1
+
+    /*
+     * Indicate how many hidden layers there are
+     */
+    private val hiddenCount = layers.size - 1
 
     init {
+        // Initialize each layer of the network with random values
+        // TODO implement better algorithms for the initialization's process
         for (i in 1 until layers.size) {
             // i - 1 rows, i columns
             parameters["W$i"] = Nd4j.rand(*intArrayOf(layers[i], layers[i - 1])).castTo(DataType.DOUBLE)
@@ -19,23 +46,18 @@ class NeuronalNetwork(private val layers: IntArray, private val hiddenActivation
         }
     }
 
-    fun train(
-        X: INDArray,
-        Y: INDArray,
-        x: INDArray,
-        y: INDArray,
-        learningRate: Double,
-        epochs: Long,
-        verbose: Boolean = true
-    ): Pair<MutableList<Double>, MutableList<Double>> {
+    /**
+     *
+     */
+    fun train(X: INDArray, Y: INDArray, x: INDArray, y: INDArray, learningRate: Double, epochs: Long, verbose: Boolean = true): Pair<MutableList<Double>, MutableList<Double>> {
         val validationLosses = mutableListOf<Double>()
         val trainingLosses = mutableListOf<Double>()
         for (epoch in 0 until epochs) {
             val cache = forward(X)
             backward(X, Y, cache, learningRate)
-            val yPredition = inference(x)
-            val trainingLoss = lossFunction.forward(Y, cache.second["A$hiddens"]!!)
-            val validationLoss = lossFunction.forward(y, yPredition)
+            val yPrediction = inference(x)
+            val trainingLoss = lossFunction.forward(Y, cache.second["A$hiddenCount"]!!)
+            val validationLoss = lossFunction.forward(y, yPrediction)
 
             if(verbose) {
                 println("Epoch $epoch - Training loss ${(trainingLoss.element() as Double).toInt()} - Validation Loss ${(validationLoss.element() as Double).toInt()}")
@@ -48,10 +70,16 @@ class NeuronalNetwork(private val layers: IntArray, private val hiddenActivation
         return Pair(trainingLosses, validationLosses)
     }
 
+    /**
+     *
+     */
     fun inference(x: INDArray): INDArray {
-        return forward(x).second["A$hiddens"]!!
+        return forward(x).second["A$hiddenCount"]!!
     }
 
+    /**
+     *
+     */
     private fun forward(x: INDArray): Pair<MutableMap<String, INDArray>, MutableMap<String, INDArray>> {
         val logits = mutableMapOf<String, INDArray>()
         val activations = mutableMapOf<String, INDArray>()
@@ -63,19 +91,16 @@ class NeuronalNetwork(private val layers: IntArray, private val hiddenActivation
             logits["Z$i"] = (parameters["W$i"]!!.mmul(activations["A${i - 1}"])).add(biases["b$i"]!!)
             activations["A$i"] = hiddenActivation.forward(logits["Z$i"]!!)
         }
-        logits["Z${layers.size - 1}"] =
-            (parameters["W${layers.size - 1}"]!!.mmul(activations["A${layers.size - 2}"])).add(biases["b${layers.size - 1}"]!!)
-        activations["A${layers.size - 1}"] = logits["Z${layers.size - 1}"]!!.dup()
+        logits["Z${layers.size - 1}"] = (parameters["W${layers.size - 1}"]!!.mmul(activations["A${layers.size - 2}"])).add(biases["b${layers.size - 1}"]!!)
+        activations["A${layers.size - 1}"] = lastActivation.forward(logits["Z${layers.size - 1}"]!!)
 
         return Pair(logits, activations)
     }
 
-    private fun backward(
-        x: INDArray,
-        y: INDArray,
-        cache: Pair<MutableMap<String, INDArray>, MutableMap<String, INDArray>>,
-        learningRate: Double
-    ) {
+    /**
+     *
+     */
+    private fun backward(x: INDArray, y: INDArray, cache: Pair<MutableMap<String, INDArray>, MutableMap<String, INDArray>>, learningRate: Double) {
         val logits = cache.first
         val activations = cache.second
         val activationGrads = mutableMapOf<String, INDArray>()
@@ -83,16 +108,16 @@ class NeuronalNetwork(private val layers: IntArray, private val hiddenActivation
         val parameterGrads = mutableMapOf<String, INDArray>()
         val biasGrads = mutableMapOf<String, INDArray>()
 
-        logitGrads["dZ$hiddens"] = lossFunction.backward(y, activations["A$hiddens"]!!)
+        logitGrads["dZ$hiddenCount"] = lossFunction.backward(y, activations["A$hiddenCount"]!!)
 
-        for (i in 1 until hiddens) {
+        for (i in 1 until hiddenCount) {
             val activationGrad =
-                (parameters["W${hiddens - i + 1}"]!!.transpose()).mmul(logitGrads["dZ${hiddens - i + 1}"]!!)
-            activationGrads["dA${hiddens - i}"] = activationGrad
+                (parameters["W${hiddenCount - i + 1}"]!!.transpose()).mmul(logitGrads["dZ${hiddenCount - i + 1}"]!!)
+            activationGrads["dA${hiddenCount - i}"] = activationGrad
 
 
-            val logitGrad = activationGrads["dA${hiddens - i}"]!!.mul(hiddenActivation.backward(logits["Z${hiddens - i}"]!!))
-            logitGrads["dZ${hiddens - i}"] = logitGrad
+            val logitGrad = activationGrads["dA${hiddenCount - i}"]!!.mul(hiddenActivation.backward(logits["Z${hiddenCount - i}"]!!))
+            logitGrads["dZ${hiddenCount - i}"] = logitGrad
         }
 
         parameterGrads["dW1"] = logitGrads["dZ1"]!!.mmul(x.transpose())

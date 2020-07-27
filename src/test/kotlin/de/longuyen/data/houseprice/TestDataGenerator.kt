@@ -1,4 +1,4 @@
-package de.longuyen.data
+package de.longuyen.data.houseprice
 
 import org.apache.commons.csv.CSVFormat
 import org.apache.commons.csv.CSVParser
@@ -10,7 +10,7 @@ import kotlin.test.assertTrue
 class TestDataGenerator {
     @Test
     fun `Test method read raw csv to map with training data`(){
-        val dataGenerator = HousePriceDataGenerator()
+        val dataGenerator = CsvDataReader()
         val inputStream = javaClass.getResourceAsStream("/train.csv")
         InputStreamReader(inputStream).use {
             val csvParser = CSVParser(it, CSVFormat.DEFAULT)
@@ -26,7 +26,7 @@ class TestDataGenerator {
 
     @Test
     fun `Test method read raw csv to map with testing data`(){
-        val dataGenerator = HousePriceDataGenerator()
+        val dataGenerator = CsvDataReader()
         val inputStream = javaClass.getResourceAsStream("/test.csv")
         InputStreamReader(inputStream).use {
             val csvParser = CSVParser(it, CSVFormat.DEFAULT)

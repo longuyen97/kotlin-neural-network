@@ -1,9 +1,25 @@
-package de.longuyen.data
+package de.longuyen.data.houseprice
 
 import org.nd4j.linalg.api.ndarray.INDArray
 import org.nd4j.linalg.factory.Nd4j
 import java.io.Serializable
 import kotlin.collections.HashMap
+
+
+/**
+ * Help class to memorize how the discrete attributes were encoded. Assuming the data in the column is discrete and can not be compared
+ * @param index Indicates the original CSV column's index of the not encoded file. This original column will be removed after one hot encoding
+ * @param oneHotEncoded Map each unique value in the column to a new index
+ */
+data class DiscreteAttributesCode(val index: Int, val oneHotEncoded: Map<String, Int>) : Serializable
+
+/**
+ * Help class to memorize how the continuous attributes were encoded. Assuming the data in the column is continuous and can be compared
+ * @param index Indicates the original CSV's column's index
+ * @param min minimal value of the column
+ * @param max maximal value of the column
+ */
+data class ContinuousAttributesCode(val index: Int, val min: Double, val max: Double) : Serializable
 
 /**
  * Class for bringing the house price dataset in the correct form.
@@ -17,7 +33,7 @@ import kotlin.collections.HashMap
  *
  * @param dataFrame the orignal data. Will be edited inplace.
  */
-class HousePriceDataEncoder(dataFrame: Map<Int, MutableList<String>>) : DataEncoder(dataFrame), Serializable {
+class DataEncoder(private val dataFrame: Map<Int, MutableList<String>>) : Serializable {
     // The one hot encoding information for encoding future data
     val discreteMapping: MutableMap<Int, DiscreteAttributesCode>
 
@@ -35,7 +51,7 @@ class HousePriceDataEncoder(dataFrame: Map<Int, MutableList<String>>) : DataEnco
         this.continuousMapping = normalizeContinuousAttributes(this.encoded)
     }
 
-    override fun encode(): Pair<INDArray, INDArray> {
+    fun encode(): Pair<INDArray, INDArray> {
         // Convert the value of the target column to a 2D double list
         val target = {
             val ret = mutableListOf<Double>()
@@ -86,7 +102,7 @@ class HousePriceDataEncoder(dataFrame: Map<Int, MutableList<String>>) : DataEnco
         return Pair(Nd4j.createFromArray(featuresNdarray), Nd4j.createFromArray(targetNdArray))
     }
 
-    override fun encodeFutureData(dataFrame: Map<Int, MutableList<String>>): INDArray {
+    fun encodeFutureData(dataFrame: Map<Int, MutableList<String>>): INDArray {
         val outputMap = dataFrame.toMutableMap()
         outputMap.remove(HousePriceDataAttributes.Id.index)
 

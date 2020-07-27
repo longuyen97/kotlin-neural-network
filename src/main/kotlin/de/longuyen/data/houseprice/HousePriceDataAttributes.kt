@@ -1,4 +1,4 @@
-package de.longuyen.data
+package de.longuyen.data.houseprice
 
 /**
  * Classify each attribute of the data type into two types:

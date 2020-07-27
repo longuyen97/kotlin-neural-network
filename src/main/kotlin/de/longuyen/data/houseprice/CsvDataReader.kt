@@ -1,4 +1,4 @@
-package de.longuyen.data
+package de.longuyen.data.houseprice
 
 import org.apache.commons.csv.CSVFormat
 import org.apache.commons.csv.CSVParser
@@ -8,7 +8,7 @@ import java.io.Serializable
 /**
  * Data generator for the dataset Boston House price.
  */
-class HousePriceDataGenerator : DataGenerator, Serializable {
+class CsvDataReader : Serializable {
 
     /**
      * Undertake the task of parsing the raw csv file into a Map.
@@ -54,7 +54,7 @@ class HousePriceDataGenerator : DataGenerator, Serializable {
     /**
      * Obtain the training data of the house price dataset
      */
-    override fun getTrainingData(): Map<Int, MutableList<String>> {
+    fun getTrainingData(): Map<Int, MutableList<String>> {
         javaClass.getResourceAsStream("/train.csv").use { inputStream ->
             InputStreamReader(inputStream).use {inputStreamReader ->
                 val csvParser = CSVParser(inputStreamReader, CSVFormat.DEFAULT)
@@ -66,7 +66,7 @@ class HousePriceDataGenerator : DataGenerator, Serializable {
     /**
      * Obtain the testing data of the house price dataset
      */
-    override fun getTestingData(): Map<Int, MutableList<String>> {
+    fun getTestingData(): Map<Int, MutableList<String>> {
         javaClass.getResourceAsStream("/test.csv").use { inputStream ->
             InputStreamReader(inputStream).use {inputStreamReader ->
                 val csvParser = CSVParser(inputStreamReader, CSVFormat.DEFAULT)
@@ -78,7 +78,7 @@ class HousePriceDataGenerator : DataGenerator, Serializable {
     /**
      * Obtain the testing data of the house price dataset
      */
-    override fun getValidatingData(): Map<Int, MutableList<String>> {
+    fun getValidatingData(): Map<Int, MutableList<String>> {
         javaClass.getResourceAsStream("/validation.csv").use { inputStream ->
             InputStreamReader(inputStream).use {inputStreamReader ->
                 val csvParser = CSVParser(inputStreamReader, CSVFormat.DEFAULT)

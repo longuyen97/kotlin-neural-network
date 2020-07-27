@@ -1,4 +1,4 @@
-package de.longuyen.data
+package de.longuyen.data.houseprice
 
 import org.junit.Test
 import java.util.*
@@ -10,7 +10,7 @@ import kotlin.test.assertTrue
 class TestDataEncoder {
     @Test
     fun `Test methode encodeDiscreteAttributess with only one lines`() {
-        val dataGenerator = HousePriceDataGenerator()
+        val dataGenerator = CsvDataReader()
         val valData = dataGenerator.getValidatingData().toMutableMap()
         valData.remove(0)
 
@@ -20,13 +20,13 @@ class TestDataEncoder {
 
     @Test
     fun `Test methode encodeDiscreteAttributess with training data`() {
-        val dataGenerator = HousePriceDataGenerator()
+        val dataGenerator = CsvDataReader()
         val valData = dataGenerator.getTrainingData().toMutableMap()
         valData.remove(0)
         val discreteEncoding = encodeDiscreteAttributes(valData)
         val continuousNormalization = normalizeContinuousAttributes(valData)
 
-        val dataEncoder = HousePriceDataEncoder(dataGenerator.getTrainingData().toMutableMap())
+        val dataEncoder = DataEncoder(dataGenerator.getTrainingData().toMutableMap())
         assertEquals(discreteEncoding, dataEncoder.discreteMapping)
         assertEquals(continuousNormalization, dataEncoder.continuousMapping)
         assertTrue(dataEncoder.encoded.containsKey(HousePriceDataAttributes.SalePrice.index))
@@ -61,10 +61,10 @@ class TestDataEncoder {
 
     @Test
     fun `test methode encode`() {
-        val dataGenerator = HousePriceDataGenerator()
+        val dataGenerator = CsvDataReader()
         val trainingData = dataGenerator.getTrainingData().toMutableMap()
         assertTrue(trainingData.containsKey(HousePriceDataAttributes.SalePrice.index))
-        val dataEncoder = HousePriceDataEncoder(trainingData)
+        val dataEncoder = DataEncoder(trainingData)
         assertTrue(dataEncoder.encoded.containsKey(HousePriceDataAttributes.SalePrice.index))
         val data = dataEncoder.encode()
         assertTrue(Arrays.equals(data.first.shape(), longArrayOf(318, 1460)))
@@ -76,13 +76,13 @@ class TestDataEncoder {
 
     @Test
     fun `test methode encode with testing data`(){
-        val dataGenerator = HousePriceDataGenerator()
+        val dataGenerator = CsvDataReader()
         val trainingData = dataGenerator.getTrainingData().toMutableMap()
         val testingData = dataGenerator.getTestingData().toMutableMap()
         val valData = dataGenerator.getValidatingData().toMutableMap()
 
         assertTrue(trainingData.containsKey(HousePriceDataAttributes.SalePrice.index))
-        val dataEncoder = HousePriceDataEncoder(trainingData)
+        val dataEncoder = DataEncoder(trainingData)
         assertTrue(dataEncoder.encoded.containsKey(HousePriceDataAttributes.SalePrice.index))
         val testingNdarray = dataEncoder.encodeFutureData(testingData)
         assertTrue(Arrays.equals(testingNdarray.shape(), longArrayOf(318, 1459)))
