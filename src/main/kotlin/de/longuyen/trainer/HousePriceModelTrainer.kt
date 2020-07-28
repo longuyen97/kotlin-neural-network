@@ -53,6 +53,6 @@ class HousePriceModelTrainer(layers: IntArray, private val learningRate: Double,
 }
 
 fun main() {
-    val trainer = HousePriceModelTrainer(intArrayOf(318, 32, 1), 0.01, 100000)
+    val trainer = HousePriceModelTrainer(intArrayOf(318, 32, 1), 0.001, 100000)
     trainer.train()
 }

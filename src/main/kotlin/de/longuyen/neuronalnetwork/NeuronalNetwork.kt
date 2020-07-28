@@ -47,17 +47,27 @@ class NeuronalNetwork(private val layers: IntArray, private val hiddenActivation
     }
 
     /**
-     *
+     * Adjusting model's parameters with the given data set.
+     * @param X training features
+     * @param Y training target
+     * @param x validating features
+     * @param y validating target
      */
     fun train(X: INDArray, Y: INDArray, x: INDArray, y: INDArray, learningRate: Double, epochs: Long, verbose: Boolean = true): Pair<MutableList<Double>, MutableList<Double>> {
         val validationLosses = mutableListOf<Double>()
         val trainingLosses = mutableListOf<Double>()
+
         for (epoch in 0 until epochs) {
+            // Forward propagation
             val cache = forward(X)
+
+            // Backward propagation
             backward(X, Y, cache, learningRate)
+
+            // Calculate losses on training and validating dataset
             val yPrediction = inference(x)
-            val trainingLoss = lossFunction.forward(Y, cache.second["A$hiddenCount"]!!)
-            val validationLoss = lossFunction.forward(y, yPrediction)
+            val trainingLoss = lossFunction.forward(yTrue = Y, yPrediction = cache["A$hiddenCount"]!!)
+            val validationLoss = lossFunction.forward(yTrue = y, yPrediction = yPrediction)
 
             if(verbose) {
                 println("Epoch $epoch - Training loss ${(trainingLoss.element() as Double).toInt()} - Validation Loss ${(validationLoss.element() as Double).toInt()}")
@@ -71,65 +81,68 @@ class NeuronalNetwork(private val layers: IntArray, private val hiddenActivation
     }
 
     /**
-     *
+     * Forward propagation and return the output of the last layer
      */
     fun inference(x: INDArray): INDArray {
-        return forward(x).second["A$hiddenCount"]!!
+        return forward(x)["A$hiddenCount"]!!
     }
 
     /**
-     *
+     * Forward propagation
+     * @param x features
+     * return the output of each layer and its corresponding scaled version
      */
-    private fun forward(x: INDArray): Pair<MutableMap<String, INDArray>, MutableMap<String, INDArray>> {
-        val logits = mutableMapOf<String, INDArray>()
-        val activations = mutableMapOf<String, INDArray>()
+    private fun forward(x: INDArray): MutableMap<String, INDArray> {
+        val cache = mutableMapOf<String, INDArray>()
 
-        logits["Z1"] = (parameters["W1"]!!.mmul(x)).add(biases["b1"]!!)
-        activations["A1"] = hiddenActivation.forward(logits["Z1"]!!)
+        // Calculate the output of the first layer manually
+        cache["Z1"] = (parameters["W1"]!!.mmul(x)).add(biases["b1"]!!)
+        cache["A1"] = hiddenActivation.forward(cache["Z1"]!!)
 
+        // Calculate the output of the next hidden layers atuomatically
         for (i in 2 until layers.size - 1) {
-            logits["Z$i"] = (parameters["W$i"]!!.mmul(activations["A${i - 1}"])).add(biases["b$i"]!!)
-            activations["A$i"] = hiddenActivation.forward(logits["Z$i"]!!)
+            cache["Z$i"] = (parameters["W$i"]!!.mmul(cache["A${i - 1}"])).add(biases["b$i"]!!)
+            cache["A$i"] = hiddenActivation.forward(cache["Z$i"]!!)
         }
-        logits["Z${layers.size - 1}"] = (parameters["W${layers.size - 1}"]!!.mmul(activations["A${layers.size - 2}"])).add(biases["b${layers.size - 1}"]!!)
-        activations["A${layers.size - 1}"] = lastActivation.forward(logits["Z${layers.size - 1}"]!!)
 
-        return Pair(logits, activations)
+        // Calculate the output of the last layer manually so I scale the output with another activation function
+        cache["Z${layers.size - 1}"] = (parameters["W${layers.size - 1}"]!!.mmul(cache["A${layers.size - 2}"])).add(biases["b${layers.size - 1}"]!!)
+        cache["A${layers.size - 1}"] = lastActivation.forward(cache["Z${layers.size - 1}"]!!)
+
+        return cache
     }
 
     /**
-     *
+     * Backward propagation
+     * @param x training features
+     * @param y training target
+     * @param cache the cached output of each layer, unscaled and scaled
+     * @param learningRate the learning rate for gradient descent
      */
-    private fun backward(x: INDArray, y: INDArray, cache: Pair<MutableMap<String, INDArray>, MutableMap<String, INDArray>>, learningRate: Double) {
-        val logits = cache.first
-        val activations = cache.second
-        val activationGrads = mutableMapOf<String, INDArray>()
-        val logitGrads = mutableMapOf<String, INDArray>()
-        val parameterGrads = mutableMapOf<String, INDArray>()
-        val biasGrads = mutableMapOf<String, INDArray>()
+    private fun backward(x: INDArray, y: INDArray, cache: MutableMap<String, INDArray>, learningRate: Double) {
+        val grads = mutableMapOf<String, INDArray>()
 
-        logitGrads["dZ$hiddenCount"] = lossFunction.backward(y, activations["A$hiddenCount"]!!)
+        // Calculate gradients of the loss respected to prediction
+        grads["dZ$hiddenCount"] = lossFunction.backward(yTrue = y, yPrediction = cache["A$hiddenCount"]!!)
 
+        // Calculate the gradients of loss respected to the output and the activated output
         for (i in 1 until hiddenCount) {
-            val activationGrad =
-                (parameters["W${hiddenCount - i + 1}"]!!.transpose()).mmul(logitGrads["dZ${hiddenCount - i + 1}"]!!)
-            activationGrads["dA${hiddenCount - i}"] = activationGrad
-
-
-            val logitGrad = activationGrads["dA${hiddenCount - i}"]!!.mul(hiddenActivation.backward(logits["Z${hiddenCount - i}"]!!))
-            logitGrads["dZ${hiddenCount - i}"] = logitGrad
+            grads["dA${hiddenCount - i}"] = (parameters["W${hiddenCount - i + 1}"]!!.transpose()).mmul(grads["dZ${hiddenCount - i + 1}"]!!)
+            grads["dZ${hiddenCount - i}"] = grads["dA${hiddenCount - i}"]!!.mul(hiddenActivation.backward(cache["Z${hiddenCount - i}"]!!))
         }
 
-        parameterGrads["dW1"] = logitGrads["dZ1"]!!.mmul(x.transpose())
-        biasGrads["db1"] = logitGrads["dZ1"]!!.sum(true, 1)
+        // Calculate the gradients of loss respected to weights and biases
+        grads["dW1"] = grads["dZ1"]!!.mmul(x.transpose())
+        grads["db1"] = grads["dZ1"]!!.sum(true, 1)
         for (i in 2 until layers.size) {
-            parameterGrads["dW$i"] = logitGrads["dZ$i"]!!.mmul(activations["A${i - 1}"]!!.transpose())
-            biasGrads["db$i"] = logitGrads["dZ$i"]!!.sum(true, 1)
+            grads["dW$i"] = grads["dZ$i"]!!.mmul(cache["A${i - 1}"]!!.transpose())
+            grads["db$i"] = grads["dZ$i"]!!.sum(true, 1)
         }
 
+        // Adjusting parameters respected to the gradients
         for (i in 2 until layers.size) {
-            parameters["W$i"] = parameters["W$i"]!!.sub(parameterGrads["dW$i"]!!.mul(learningRate))
-            biases["b$i"] = biases["b$i"]!!.sub(biasGrads["db$i"]!!.mul(learningRate))
+            parameters["W$i"] = parameters["W$i"]!!.sub(grads["dW$i"]!!.mul(learningRate))
+            biases["b$i"] = biases["b$i"]!!.sub(grads["db$i"]!!.mul(learningRate))
         }
     }
 }

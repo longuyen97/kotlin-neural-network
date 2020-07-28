@@ -3,7 +3,7 @@
 Neuronal network is a statistical model where parameters can be updated with back propagation on a target. The implementation 
 in this repository supports following features:
 
-- [x] Regression with MAE, MSE
+- [x] Regression with MAE
 - [ ] Classification with cross entropy
 - [ ] Gradient descent optimization
 - [ ] Momentum driven gradient descent
