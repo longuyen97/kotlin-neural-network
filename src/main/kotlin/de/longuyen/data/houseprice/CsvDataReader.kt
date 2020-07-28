@@ -58,7 +58,7 @@ class CsvDataReader : Serializable {
         javaClass.getResourceAsStream("/houseprice/train.csv").use { inputStream ->
             InputStreamReader(inputStream).use {inputStreamReader ->
                 val csvParser = CSVParser(inputStreamReader, CSVFormat.DEFAULT)
-                return readRawCsvToMap(csvParser, false)
+                return readRawCsvToMap(csvParser, true)
             }
         }
     }
@@ -82,7 +82,7 @@ class CsvDataReader : Serializable {
         javaClass.getResourceAsStream("/houseprice/test.csv").use { inputStream ->
             InputStreamReader(inputStream).use {inputStreamReader ->
                 val csvParser = CSVParser(inputStreamReader, CSVFormat.DEFAULT)
-                return readRawCsvToMap(csvParser, true)
+                return readRawCsvToMap(csvParser, false)
             }
         }
     }
