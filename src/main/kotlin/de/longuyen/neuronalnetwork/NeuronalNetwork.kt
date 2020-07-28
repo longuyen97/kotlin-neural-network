@@ -24,12 +24,7 @@ class NeuronalNetwork(private val layers: IntArray, private val hiddenActivation
     /*
      * Intern parameters of the network
      */
-    private val parameters = mutableMapOf<String, INDArray>()
-
-    /*
-     * Bias for each layer of the network
-     */
-    private val biases = mutableMapOf<String, INDArray>()
+    private val weights = mutableMapOf<String, INDArray>()
 
     /*
      * Indicate how many hidden layers there are
@@ -41,8 +36,10 @@ class NeuronalNetwork(private val layers: IntArray, private val hiddenActivation
         // TODO implement better algorithms for the initialization's process
         for (i in 1 until layers.size) {
             // i - 1 rows, i columns
-            parameters["W$i"] = Nd4j.rand(*intArrayOf(layers[i], layers[i - 1])).castTo(DataType.DOUBLE)
-            biases["b$i"] = Nd4j.zeros(*intArrayOf(layers[i], 1)).castTo(DataType.DOUBLE)
+            // Initialize weights
+            weights["W$i"] = Nd4j.rand(*intArrayOf(layers[i], layers[i - 1])).castTo(DataType.DOUBLE)
+            // Initialize biases
+            weights["b$i"] = Nd4j.zeros(*intArrayOf(layers[i], 1)).castTo(DataType.DOUBLE)
         }
     }
 
@@ -96,17 +93,17 @@ class NeuronalNetwork(private val layers: IntArray, private val hiddenActivation
         val cache = mutableMapOf<String, INDArray>()
 
         // Calculate the output of the first layer manually
-        cache["Z1"] = (parameters["W1"]!!.mmul(x)).add(biases["b1"]!!)
+        cache["Z1"] = (weights["W1"]!!.mmul(x)).add(weights["b1"]!!)
         cache["A1"] = hiddenActivation.forward(cache["Z1"]!!)
 
         // Calculate the output of the next hidden layers atuomatically
         for (i in 2 until layers.size - 1) {
-            cache["Z$i"] = (parameters["W$i"]!!.mmul(cache["A${i - 1}"])).add(biases["b$i"]!!)
+            cache["Z$i"] = (weights["W$i"]!!.mmul(cache["A${i - 1}"])).add(weights["b$i"]!!)
             cache["A$i"] = hiddenActivation.forward(cache["Z$i"]!!)
         }
 
         // Calculate the output of the last layer manually so I scale the output with another activation function
-        cache["Z${layers.size - 1}"] = (parameters["W${layers.size - 1}"]!!.mmul(cache["A${layers.size - 2}"])).add(biases["b${layers.size - 1}"]!!)
+        cache["Z${layers.size - 1}"] = (weights["W${layers.size - 1}"]!!.mmul(cache["A${layers.size - 2}"])).add(weights["b${layers.size - 1}"]!!)
         cache["A${layers.size - 1}"] = lastActivation.forward(cache["Z${layers.size - 1}"]!!)
 
         return cache
@@ -127,7 +124,7 @@ class NeuronalNetwork(private val layers: IntArray, private val hiddenActivation
 
         // Calculate the gradients of loss respected to the output and the activated output
         for (i in 1 until hiddenCount) {
-            grads["dA${hiddenCount - i}"] = (parameters["W${hiddenCount - i + 1}"]!!.transpose()).mmul(grads["dZ${hiddenCount - i + 1}"]!!)
+            grads["dA${hiddenCount - i}"] = (weights["W${hiddenCount - i + 1}"]!!.transpose()).mmul(grads["dZ${hiddenCount - i + 1}"]!!)
             grads["dZ${hiddenCount - i}"] = grads["dA${hiddenCount - i}"]!!.mul(hiddenActivation.backward(cache["Z${hiddenCount - i}"]!!))
         }
 
@@ -141,8 +138,8 @@ class NeuronalNetwork(private val layers: IntArray, private val hiddenActivation
 
         // Adjusting parameters respected to the gradients
         for (i in 2 until layers.size) {
-            parameters["W$i"] = parameters["W$i"]!!.sub(grads["dW$i"]!!.mul(learningRate))
-            biases["b$i"] = biases["b$i"]!!.sub(grads["db$i"]!!.mul(learningRate))
+            weights["W$i"] = weights["W$i"]!!.sub(grads["dW$i"]!!.mul(learningRate))
+            weights["b$i"] = weights["b$i"]!!.sub(grads["db$i"]!!.mul(learningRate))
         }
     }
 }

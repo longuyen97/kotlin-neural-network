@@ -14,6 +14,9 @@ import java.io.FileOutputStream
 import java.io.ObjectOutputStream
 import java.io.Serializable
 
+/**
+ * Driver code to run a model on the house price data set
+ */
 class HousePriceModelTrainer(layers: IntArray, private val learningRate: Double, private val epochs: Long) : Serializable {
     private val neuronalNetwork: NeuronalNetwork = NeuronalNetwork(layers, LeakyRelu(), NoActivation(), MAE())
 
