@@ -3,13 +3,13 @@
 Neuronal network is a statistical model where parameters can be updated with back propagation on a target. The implementation 
 in this repository supports following features:
 
-- [x] Regression with MAE
-- [ ] Classification with cross entropy
-- [ ] Gradient descent optimization
-- [ ] Momentum driven gradient descent
+- [x] Regression with MAE loss
+- [x] Classification with sigmoid loss and cross entropy loss
+- [x] Gradient descent optimization
+- [x] Momentum driven gradient descent
 - [ ] Nestorov driven gradient descent
-- [ ] Adagrad
-- [ ] Adam
+- [ ] Adagrad optimization
+- [ ] Adam optimization
 
 ### Dependencies
 - `Apache Commons CSV` for CSV reading.

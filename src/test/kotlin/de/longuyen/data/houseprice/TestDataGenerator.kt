@@ -11,23 +11,7 @@ class TestDataGenerator {
     @Test
     fun `Test method read raw csv to map with training data`(){
         val dataGenerator = CsvDataReader()
-        val inputStream = javaClass.getResourceAsStream("/train.csv")
-        InputStreamReader(inputStream).use {
-            val csvParser = CSVParser(it, CSVFormat.DEFAULT)
-            val csvData = dataGenerator.readRawCsvToMap(csvParser, true)
-            assertTrue { csvData.isNotEmpty() }
-
-            val firstColumnSize = csvData[0]?.size
-            for(i in csvData.entries){
-                assertEquals(i.value.size, firstColumnSize)
-            }
-        }
-    }
-
-    @Test
-    fun `Test method read raw csv to map with testing data`(){
-        val dataGenerator = CsvDataReader()
-        val inputStream = javaClass.getResourceAsStream("/test.csv")
+        val inputStream = javaClass.getResourceAsStream("/houseprice/train.csv")
         InputStreamReader(inputStream).use {
             val csvParser = CSVParser(it, CSVFormat.DEFAULT)
             val csvData = dataGenerator.readRawCsvToMap(csvParser, false)

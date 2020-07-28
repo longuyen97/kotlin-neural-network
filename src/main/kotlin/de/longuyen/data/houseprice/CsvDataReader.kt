@@ -55,19 +55,7 @@ class CsvDataReader : Serializable {
      * Obtain the training data of the house price dataset
      */
     fun getTrainingData(): Map<Int, MutableList<String>> {
-        javaClass.getResourceAsStream("/train.csv").use { inputStream ->
-            InputStreamReader(inputStream).use {inputStreamReader ->
-                val csvParser = CSVParser(inputStreamReader, CSVFormat.DEFAULT)
-                return readRawCsvToMap(csvParser, true)
-            }
-        }
-    }
-
-    /**
-     * Obtain the testing data of the house price dataset
-     */
-    fun getTestingData(): Map<Int, MutableList<String>> {
-        javaClass.getResourceAsStream("/test.csv").use { inputStream ->
+        javaClass.getResourceAsStream("/houseprice/train.csv").use { inputStream ->
             InputStreamReader(inputStream).use {inputStreamReader ->
                 val csvParser = CSVParser(inputStreamReader, CSVFormat.DEFAULT)
                 return readRawCsvToMap(csvParser, false)
@@ -79,7 +67,19 @@ class CsvDataReader : Serializable {
      * Obtain the testing data of the house price dataset
      */
     fun getValidatingData(): Map<Int, MutableList<String>> {
-        javaClass.getResourceAsStream("/validation.csv").use { inputStream ->
+        javaClass.getResourceAsStream("/houseprice/validation.csv").use { inputStream ->
+            InputStreamReader(inputStream).use {inputStreamReader ->
+                val csvParser = CSVParser(inputStreamReader, CSVFormat.DEFAULT)
+                return readRawCsvToMap(csvParser, true)
+            }
+        }
+    }
+
+    /**
+     * Obtain the testing data of the house price dataset
+     */
+    fun getTestingData(): Map<Int, MutableList<String>> {
+        javaClass.getResourceAsStream("/houseprice/test.csv").use { inputStream ->
             InputStreamReader(inputStream).use {inputStreamReader ->
                 val csvParser = CSVParser(inputStreamReader, CSVFormat.DEFAULT)
                 return readRawCsvToMap(csvParser, true)

@@ -64,3 +64,4 @@ fabric.properties
 .idea/
 *.iml
 *.log*
+!src/main/resources/mnist/mnist.zip
