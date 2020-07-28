@@ -1,5 +1,11 @@
 package de.longuyen.neuronalnetwork.optimizers
 
-interface Optimizer {
+import org.nd4j.linalg.api.ndarray.INDArray
 
+abstract class Optimizer {
+    abstract fun optimize(weights: MutableMap<String, INDArray>, gradients: MutableMap<String, INDArray>, layers: Int)
+
+    override fun toString(): String {
+        return "Optimizer {${this.javaClass.simpleName}}"
+    }
 }

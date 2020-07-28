@@ -1,10 +1,10 @@
 package de.longuyen.neuronalnetwork
 
 import de.longuyen.neuronalnetwork.activations.Activation
+import de.longuyen.neuronalnetwork.initializers.Initializer
 import de.longuyen.neuronalnetwork.losses.LossFunction
-import org.nd4j.linalg.api.buffer.DataType
+import de.longuyen.neuronalnetwork.optimizers.Optimizer
 import org.nd4j.linalg.api.ndarray.INDArray
-import org.nd4j.linalg.factory.Nd4j
 import java.io.Serializable
 
 
@@ -20,28 +20,16 @@ import java.io.Serializable
  *
  * @param lossFunction Determined how the result of the network should be evaluated against a target.
  */
-class NeuronalNetwork(private val layers: IntArray, private val hiddenActivation: Activation, private val lastActivation: Activation, private val lossFunction: LossFunction) : Serializable {
+class NeuronalNetwork(private val layers: IntArray,  private val initializer: Initializer, private val hiddenActivation: Activation, private val lastActivation: Activation, private val lossFunction: LossFunction, private val optimizer: Optimizer) : Serializable {
     /*
      * Intern parameters of the network
      */
-    private val weights = mutableMapOf<String, INDArray>()
+    private val weights = initializer.initialize(layers)
 
     /*
      * Indicate how many hidden layers there are
      */
     private val hiddenCount = layers.size - 1
-
-    init {
-        // Initialize each layer of the network with random values
-        // TODO implement better algorithms for the initialization's process
-        for (i in 1 until layers.size) {
-            // i - 1 rows, i columns
-            // Initialize weights
-            weights["W$i"] = Nd4j.rand(*intArrayOf(layers[i], layers[i - 1])).castTo(DataType.DOUBLE)
-            // Initialize biases
-            weights["b$i"] = Nd4j.zeros(*intArrayOf(layers[i], 1)).castTo(DataType.DOUBLE)
-        }
-    }
 
     /**
      * Adjusting model's parameters with the given data set.
@@ -50,7 +38,7 @@ class NeuronalNetwork(private val layers: IntArray, private val hiddenActivation
      * @param x validating features
      * @param y validating target
      */
-    fun train(X: INDArray, Y: INDArray, x: INDArray, y: INDArray, learningRate: Double, epochs: Long, verbose: Boolean = true): Pair<MutableList<Double>, MutableList<Double>> {
+    fun train(X: INDArray, Y: INDArray, x: INDArray, y: INDArray, epochs: Long, verbose: Boolean = true): Pair<MutableList<Double>, MutableList<Double>> {
         val validationLosses = mutableListOf<Double>()
         val trainingLosses = mutableListOf<Double>()
 
@@ -59,7 +47,7 @@ class NeuronalNetwork(private val layers: IntArray, private val hiddenActivation
             val cache = forward(X)
 
             // Backward propagation
-            backward(X, Y, cache, learningRate)
+            backward(X, Y, cache)
 
             // Calculate losses on training and validating dataset
             val yPrediction = inference(x)
@@ -114,9 +102,8 @@ class NeuronalNetwork(private val layers: IntArray, private val hiddenActivation
      * @param x training features
      * @param y training target
      * @param cache the cached output of each layer, unscaled and scaled
-     * @param learningRate the learning rate for gradient descent
      */
-    private fun backward(x: INDArray, y: INDArray, cache: MutableMap<String, INDArray>, learningRate: Double) {
+    private fun backward(x: INDArray, y: INDArray, cache: MutableMap<String, INDArray>) {
         val grads = mutableMapOf<String, INDArray>()
 
         // Calculate gradients of the loss respected to prediction
@@ -136,10 +123,12 @@ class NeuronalNetwork(private val layers: IntArray, private val hiddenActivation
             grads["db$i"] = grads["dZ$i"]!!.sum(true, 1)
         }
 
-        // Adjusting parameters respected to the gradients
-        for (i in 2 until layers.size) {
-            weights["W$i"] = weights["W$i"]!!.sub(grads["dW$i"]!!.mul(learningRate))
-            weights["b$i"] = weights["b$i"]!!.sub(grads["db$i"]!!.mul(learningRate))
-        }
+        optimizer.optimize(weights, grads, layers.size)
     }
+
+    override fun toString(): String {
+        return "NeuronalNetwork(layers=${layers.contentToString()}, initializer=$initializer, hiddenActivation=$hiddenActivation, lastActivation=$lastActivation, lossFunction=$lossFunction, optimizer=$optimizer)"
+    }
+
+
 }

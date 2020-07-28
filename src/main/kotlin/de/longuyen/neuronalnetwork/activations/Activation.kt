@@ -2,8 +2,12 @@ package de.longuyen.neuronalnetwork.activations
 
 import org.nd4j.linalg.api.ndarray.INDArray
 
-interface Activation{
-    fun forward(x: INDArray) : INDArray
+abstract class Activation{
+    abstract fun forward(x: INDArray) : INDArray
 
-    fun backward(x: INDArray): INDArray
+    abstract fun backward(x: INDArray): INDArray
+
+    override fun toString(): String {
+        return "Activation function {${this.javaClass.simpleName}}"
+    }
 }

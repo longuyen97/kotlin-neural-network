@@ -4,7 +4,7 @@ import org.nd4j.linalg.api.ndarray.INDArray
 import org.nd4j.linalg.factory.Nd4j
 import org.nd4j.linalg.ops.transforms.Transforms
 
-class MAE : LossFunction {
+class MAE : LossFunction() {
     override fun forward(yTrue: INDArray, yPrediction: INDArray): INDArray {
         val diff = yPrediction.sub(yTrue)
         val absolute = Transforms.abs(diff)
