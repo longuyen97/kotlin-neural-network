@@ -12,8 +12,6 @@ import org.knowm.xchart.BitmapEncoder
 import org.knowm.xchart.XYChart
 import org.knowm.xchart.XYChartBuilder
 import org.nd4j.linalg.indexing.NDArrayIndex
-import java.io.FileOutputStream
-import java.io.ObjectOutputStream
 import java.io.Serializable
 
 /**
@@ -45,8 +43,8 @@ class HousePriceModelTrainer(layers: IntArray, learningRate: Double, private val
             .width(1200)
             .height(1200)
             .title("Two-layer-network's performance")
-            .xAxisTitle("Epochs")
-            .yAxisTitle("Model's loss")
+            .xAxisTitle("Training epochs")
+            .yAxisTitle("Model's mean absolute error loss")
             .build()
         chart.addSeries("Training", xData, yTrain)
         chart.addSeries("Validating", xData, yTest)
@@ -55,6 +53,6 @@ class HousePriceModelTrainer(layers: IntArray, learningRate: Double, private val
 }
 
 fun main() {
-    val trainer = HousePriceModelTrainer(intArrayOf(318, 32, 1), 0.001, 100000)
+    val trainer = HousePriceModelTrainer(intArrayOf(318, 32, 1), 0.001, 1000)
     trainer.train()
 }
