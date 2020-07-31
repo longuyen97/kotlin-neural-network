@@ -64,6 +64,6 @@ class MnistModelTrainer(layers: IntArray, learningRate: Double, private val epoc
 }
 
 fun main() {
-    val trainer = MnistModelTrainer(intArrayOf(784, 512, 256, 10), 0.01, 300)
+    val trainer = MnistModelTrainer(intArrayOf(784, 256, 128, 10), 0.00001, 300)
     trainer.train()
 }

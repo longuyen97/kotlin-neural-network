@@ -10,6 +10,12 @@ in this repository supports following features:
 - [ ] Nestorov driven gradient descent
 - [ ] Adagrad optimization
 - [ ] Adam optimization
+- [ ] Dropping out neuronal network in forward and backward propagation
+
+The implementation is made mostly for educational purpose to provide some insight into low level programming 
+with neuronal network. For this purpose I 
+
+
 
 ### Dependencies
 - `Apache Commons CSV` for CSV reading.
