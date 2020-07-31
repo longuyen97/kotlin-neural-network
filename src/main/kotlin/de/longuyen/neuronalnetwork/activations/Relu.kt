@@ -2,8 +2,9 @@ package de.longuyen.neuronalnetwork.activations
 
 import org.nd4j.linalg.api.ndarray.INDArray
 import org.nd4j.linalg.factory.Nd4j
+import java.io.Serializable
 
-class Relu : Activation() {
+class Relu : Activation(), Serializable {
     override fun forward(x: INDArray): INDArray {
         val input: Array<DoubleArray> = x.toDoubleMatrix()
         for(yi in input.indices){

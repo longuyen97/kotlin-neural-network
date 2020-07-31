@@ -2,8 +2,9 @@ package de.longuyen.neuronalnetwork.optimizers
 
 import org.nd4j.linalg.api.ndarray.INDArray
 import org.nd4j.linalg.factory.Nd4j
+import java.io.Serializable
 
-class MomentumGradientDescent(private val learningRate: Double, private val momentum: Double = 0.9) : Optimizer() {
+class MomentumGradientDescent(private val learningRate: Double, private val momentum: Double = 0.9) : Optimizer(), Serializable {
     private var initialized = false
     private val velocity = mutableMapOf<String, INDArray>()
 

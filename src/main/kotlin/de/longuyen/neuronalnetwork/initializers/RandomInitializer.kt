@@ -3,8 +3,9 @@ package de.longuyen.neuronalnetwork.initializers
 import org.nd4j.linalg.api.buffer.DataType
 import org.nd4j.linalg.api.ndarray.INDArray
 import org.nd4j.linalg.factory.Nd4j
+import java.io.Serializable
 
-class RandomInitializer  : Initializer() {
+class RandomInitializer  : Initializer(), Serializable {
     override fun initialize(layers: IntArray): MutableMap<String, INDArray> {
         val weights = mutableMapOf<String, INDArray>()
         for (i in 1 until layers.size) {

@@ -211,7 +211,7 @@ fun encodeDiscreteAttributes(dataFrame: MutableMap<Int, MutableList<String>>): M
 
                 // Collect the unique values of the column
                 val uniqueDiscreteValues = {
-                    val ret = mutableSetOf<String>()
+                       val ret = mutableSetOf<String>()
                     for (value in dataFrame[attributeIndex]!!) {
                         ret.add(value)
                     }

@@ -6,4 +6,6 @@ interface SupervisedDataGenerator {
     fun getTrainingData() :  Pair<INDArray, INDArray>
 
     fun getTestingData() : INDArray
+
+    fun getTestingDataWithLabels() :  Pair<INDArray, INDArray>
 }

@@ -3,8 +3,9 @@ package de.longuyen.neuronalnetwork.losses
 import org.nd4j.linalg.api.ndarray.INDArray
 import org.nd4j.linalg.factory.Nd4j
 import org.nd4j.linalg.ops.transforms.Transforms
+import java.io.Serializable
 
-class MAE : LossFunction() {
+class MAE : LossFunction(), Serializable {
     override fun forward(yTrue: INDArray, yPrediction: INDArray): INDArray {
         val diff = yPrediction.sub(yTrue)
         val absolute = Transforms.abs(diff)

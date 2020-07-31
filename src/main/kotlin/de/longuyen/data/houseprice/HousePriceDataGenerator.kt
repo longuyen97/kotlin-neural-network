@@ -16,4 +16,8 @@ class HousePriceDataGenerator : SupervisedDataGenerator {
         return dataEncoder.encodeFutureData(csvDataReader.getTestingData())
     }
 
+    override fun getTestingDataWithLabels(): Pair<INDArray, INDArray> {
+        TODO("Not implemented")
+    }
+
 }

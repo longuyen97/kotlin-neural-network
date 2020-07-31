@@ -5,6 +5,7 @@ import de.longuyen.neuronalnetwork.initializers.Initializer
 import de.longuyen.neuronalnetwork.losses.LossFunction
 import de.longuyen.neuronalnetwork.optimizers.Optimizer
 import org.nd4j.linalg.api.ndarray.INDArray
+import org.nd4j.linalg.indexing.NDArrayIndex
 import java.io.Serializable
 
 
@@ -32,6 +33,31 @@ class NeuronalNetwork(private val layers: IntArray,  private val initializer: In
     private val hiddenCount = layers.size - 1
 
     /**
+     * Minibatch training
+     */
+    fun train(X: INDArray, Y: INDArray, x: INDArray, y: INDArray, epochs: Long, batchSize: Long, verbose: Boolean = true): MutableList<Double> {
+        val validationLosses = mutableListOf<Double>()
+
+        for (epoch in 0 until epochs) {
+            for (i in 0 until X.shape()[0] step batchSize) {
+                val Xi = X.get(NDArrayIndex.interval(0, x.shape()[0]), NDArrayIndex.interval(i, i + batchSize))
+                val Yi = Y.get(NDArrayIndex.interval(0, y.shape()[0]), NDArrayIndex.interval(i, i + batchSize))
+
+                train(Xi, Yi, Xi, Yi, 1, false)
+            }
+
+            if (verbose) {
+                // Calculate losses on training and validating dataset
+                val validationLoss = lossFunction.forward(yTrue = y, yPrediction = inference(x))
+                println("Epoch $epoch - Validation Loss ${(validationLoss.element() as Double)}")
+
+                validationLosses.add(validationLoss.element() as Double)
+            }
+        }
+        return validationLosses
+    }
+
+    /**
      * Adjusting model's parameters with the given data set.
      * @param X training features
      * @param Y training target
@@ -49,17 +75,16 @@ class NeuronalNetwork(private val layers: IntArray,  private val initializer: In
             // Backward propagation
             backward(X, Y, cache)
 
-            // Calculate losses on training and validating dataset
-            val yPrediction = inference(x)
-            val trainingLoss = lossFunction.forward(yTrue = Y, yPrediction = cache["A$hiddenCount"]!!)
-            val validationLoss = lossFunction.forward(yTrue = y, yPrediction = yPrediction)
-
             if(verbose) {
-                println("Epoch $epoch - Training loss ${(trainingLoss.element() as Double).toInt()} - Validation Loss ${(validationLoss.element() as Double).toInt()}")
-            }
+                // Calculate losses on training and validating dataset
+                val yPrediction = inference(x)
+                val trainingLoss = lossFunction.forward(yTrue = Y, yPrediction = cache["A$hiddenCount"]!!)
+                val validationLoss = lossFunction.forward(yTrue = y, yPrediction = yPrediction)
+                println("Epoch $epoch - Training loss ${(trainingLoss.element() as Double)} - Validation Loss ${(validationLoss.element() as Double)}")
 
-            validationLosses.add(validationLoss.element() as Double)
-            trainingLosses.add(trainingLoss.element() as Double)
+                validationLosses.add(validationLoss.element() as Double)
+                trainingLosses.add(trainingLoss.element() as Double)
+            }
         }
 
         return Pair(trainingLosses, validationLosses)

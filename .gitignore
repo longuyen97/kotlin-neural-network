@@ -65,3 +65,4 @@ fabric.properties
 *.iml
 *.log*
 !src/main/resources/mnist/mnist.zip
+src/main/resources/mnist/*.csv
