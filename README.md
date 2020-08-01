@@ -13,9 +13,7 @@ in this repository supports following features:
 - [ ] Dropping out neuronal network in forward and backward propagation
 
 The implementation is made mostly for educational purpose to provide some insight into low level programming 
-with neuronal network. For this purpose I 
-
-
+with neuronal network. For this purpose I implemented the whole network topology with Kotlin/Java.
 
 ### Dependencies
 - `Apache Commons CSV` for CSV reading.
@@ -38,3 +36,10 @@ The same models are replicated, but the the training process is optimized by two
 gradient descent. The second one memorizes the velocity of past epochs and results into a better result. Both tested on the same data of the [House Price Dataset](https://www.kaggle.com/c/house-prices-advanced-regression-techniques).
 
 ![](images/002-gradient-descent-and-momentum.png)
+
+### Performance evaluation for classification
+
+For classification purpose the output of the network will be scaled with a softmax function and the loss is calculated with the cross entropy 
+between the ground truth and the output.
+
+![](images/003-cross-entropy.png)
