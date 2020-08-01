@@ -14,6 +14,6 @@ class CrossEntropy : LossFunction(), Serializable {
     }
 
     override fun backward(yTrue: INDArray, yPrediction: INDArray): INDArray {
-        return ((yTrue.sub(yPrediction))).mul(-1.0)
+        return ((yTrue.sub(yPrediction)).div(yTrue.shape()[1])).mul(-1.0)
     }
 }
