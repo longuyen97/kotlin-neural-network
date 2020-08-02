@@ -23,6 +23,9 @@ import java.io.Serializable
  * @param lossFunction Determined how the result of the network should be evaluated against a target.
  */
 class NeuronalNetwork(private val layers: IntArray,  private val initializer: Initializer, private val hiddenActivation: Activation, private val lastActivation: Activation, private val lossFunction: LossFunction, private val optimizer: Optimizer, private val metric: Metric) : Serializable {
+    companion object {
+        private const val serialVersionUID: Long = -4270053884763734247
+    }
     /*
      * Intern parameters of the network
      */

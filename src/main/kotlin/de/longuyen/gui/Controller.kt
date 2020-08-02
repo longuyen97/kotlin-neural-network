@@ -35,9 +35,9 @@ class Controller(width: Int, height: Int) {
     private val view = View()
     private val clearButton = JButton("Clear")
     private val processButton = JButton("Process")
-    private val thicknessStat = JLabel("10")
+    private val thicknessStat = JLabel("40")
     private val resultLabel = JLabel("", SwingConstants.CENTER)
-    private val thicknessSlider = JSlider(JSlider.HORIZONTAL, 10, 50, 10)
+    private val thicknessSlider = JSlider(JSlider.HORIZONTAL, 10, 50, 40)
     private lateinit var model: NeuronalNetwork
 
     init {
@@ -53,6 +53,7 @@ class Controller(width: Int, height: Int) {
         thicknessSlider.majorTickSpacing = 25
         thicknessSlider.paintTicks = true
         thicknessSlider.preferredSize = Dimension(40, 40)
+        view.setThickness(thicknessSlider.value)
         val thicknessChangeListener = ChangeListener { e: ChangeEvent? ->
             thicknessStat.text = String.format("%s", thicknessSlider.value)
             view.setThickness(thicknessSlider.value)
@@ -72,9 +73,12 @@ class Controller(width: Int, height: Int) {
                     }
                     nativeImageMatrix[y] = doubleArray
                 }
-                val ndarray = ((Nd4j.createFromArray(nativeImageMatrix).transpose().castTo(DataType.DOUBLE)).div(255.0))
-                val result = Nd4j.argMax(model.inference(ndarray), 0)
-                println(result)
+                val ndarray = ((Nd4j.createFromArray(nativeImageMatrix).reshape(intArrayOf(784, 1)).castTo(DataType.DOUBLE)).div(255.0))
+                val result = model.inference(ndarray).mul(100).toDoubleVector()
+                println("Prediction of neuronal network: ")
+                for(i in 0..9){
+                    println("$i: ${result[i]}")
+                }
             }
         }
         processButton.addActionListener(mouseClickedActionListener)
