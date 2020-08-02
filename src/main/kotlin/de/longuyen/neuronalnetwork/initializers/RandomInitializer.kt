@@ -11,7 +11,7 @@ class RandomInitializer  : Initializer(), Serializable {
         for (i in 1 until layers.size) {
             // i - 1 rows, i columns
             // Initialize weights
-            weights["W$i"] = Nd4j.rand(*intArrayOf(layers[i], layers[i - 1])).castTo(DataType.DOUBLE)
+            weights["W$i"] = Nd4j.randn(*longArrayOf(layers[i].toLong(), layers[i - 1].toLong())).castTo(DataType.DOUBLE)
             // Initialize biases
             weights["b$i"] = Nd4j.zeros(*intArrayOf(layers[i], 1)).castTo(DataType.DOUBLE)
         }

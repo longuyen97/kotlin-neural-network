@@ -30,7 +30,7 @@ class MnistModelTrainer :
             Relu(),
             Softmax(),
             CrossEntropy(),
-            Adagrad(learningRate = 0.0001),
+            Adam(learningRate = 0.01),
             Accuracy()
         )
 
