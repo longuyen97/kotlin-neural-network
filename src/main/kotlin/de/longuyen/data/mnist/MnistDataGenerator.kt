@@ -9,6 +9,7 @@ import org.nd4j.linalg.factory.Nd4j
 import org.nd4j.linalg.indexing.NDArrayIndex
 import java.awt.image.BufferedImage
 import java.io.File
+import java.io.InputStream
 import java.io.InputStreamReader
 import javax.imageio.ImageIO
 
@@ -32,7 +33,7 @@ class MnistDataGenerator : SupervisedDataGenerator {
     private fun getData(path: String): Pair<INDArray, INDArray> {
         val featureList = mutableListOf<DoubleArray>()
         val targetList = mutableListOf<DoubleArray>()
-        InputStreamReader(this.javaClass.getResourceAsStream(path)).use {
+        InputStreamReader(File(path).inputStream()).use {
             CSVParser(it, CSVFormat.DEFAULT).use { csvRecords ->
                 var skip = false
                 for (record in csvRecords) {
@@ -82,14 +83,14 @@ class MnistDataGenerator : SupervisedDataGenerator {
     }
 
     override fun getTrainingData(): Pair<INDArray, INDArray> {
-        return getData("/mnist/train.csv")
+        return getData("data/mnist/train.csv")
     }
 
     override fun getTestingData(): INDArray {
-        return getData("/mnist/validation.csv").first
+        return getData("data/mnist/validation.csv").first
     }
 
     override fun getTestingDataWithLabels(): Pair<INDArray, INDArray> {
-        return getData("/mnist/test.csv")
+        return getData("data/mnist/test.csv")
     }
 }

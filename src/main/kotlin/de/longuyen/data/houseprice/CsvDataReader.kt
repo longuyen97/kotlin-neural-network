@@ -2,6 +2,7 @@ package de.longuyen.data.houseprice
 
 import org.apache.commons.csv.CSVFormat
 import org.apache.commons.csv.CSVParser
+import java.io.File
 import java.io.InputStreamReader
 import java.io.Serializable
 
@@ -55,7 +56,7 @@ class CsvDataReader : Serializable {
      * Obtain the training data of the house price dataset
      */
     fun getTrainingData(): Map<Int, MutableList<String>> {
-        javaClass.getResourceAsStream("/houseprice/train.csv").use { inputStream ->
+        File("data/houseprice/train.csv").inputStream().use { inputStream ->
             InputStreamReader(inputStream).use {inputStreamReader ->
                 val csvParser = CSVParser(inputStreamReader, CSVFormat.DEFAULT)
                 return readRawCsvToMap(csvParser, true)
@@ -67,7 +68,7 @@ class CsvDataReader : Serializable {
      * Obtain the testing data of the house price dataset
      */
     fun getValidatingData(): Map<Int, MutableList<String>> {
-        javaClass.getResourceAsStream("/houseprice/validation.csv").use { inputStream ->
+        File("data/houseprice/validation.csv").inputStream().use { inputStream ->
             InputStreamReader(inputStream).use {inputStreamReader ->
                 val csvParser = CSVParser(inputStreamReader, CSVFormat.DEFAULT)
                 return readRawCsvToMap(csvParser, true)
@@ -79,7 +80,7 @@ class CsvDataReader : Serializable {
      * Obtain the testing data of the house price dataset
      */
     fun getTestingData(): Map<Int, MutableList<String>> {
-        javaClass.getResourceAsStream("/houseprice/test.csv").use { inputStream ->
+        File("data/houseprice/test.csv").inputStream().use { inputStream ->
             InputStreamReader(inputStream).use {inputStreamReader ->
                 val csvParser = CSVParser(inputStreamReader, CSVFormat.DEFAULT)
                 return readRawCsvToMap(csvParser, false)
