@@ -25,7 +25,7 @@ class HousePriceModelComparer(layers: IntArray = intArrayOf(318, 64, 32, 1), lea
             de.longuyen.neuronalnetwork.metrics.MAE()
         )
     private val secondNeuronalNetwork: NeuronalNetwork =
-        NeuronalNetwork(layers, ChainInitializer(), LeakyRelu(), NoActivation(), MAE(), Adam(learningRate),
+        NeuronalNetwork(layers, ChainInitializer(), LeakyRelu(), NoActivation(), MAE(), MomentumGradientDescent(learningRate),
             de.longuyen.neuronalnetwork.metrics.MAE())
 
     fun train() {
