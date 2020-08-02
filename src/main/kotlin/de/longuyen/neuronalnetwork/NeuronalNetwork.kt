@@ -39,8 +39,11 @@ class NeuronalNetwork(private val layers: IntArray,  private val initializer: In
     /**
      * Minibatch training
      */
-    fun train(X: INDArray, Y: INDArray, x: INDArray, y: INDArray, epochs: Long, batchSize: Long, verbose: Boolean = true): MutableList<Double> {
+    fun train(X: INDArray, Y: INDArray, x: INDArray, y: INDArray, epochs: Long, batchSize: Long, verbose: Boolean = true): Map<String, DoubleArray>{
         val validationLosses = mutableListOf<Double>()
+        val trainingLosses = mutableListOf<Double>()
+        val trainingMetrics = mutableListOf<Double>()
+        val validationMetrics = mutableListOf<Double>()
 
         for (epoch in 0 until epochs) {
             for (i in 0 until X.shape()[0] step batchSize) {
@@ -53,14 +56,22 @@ class NeuronalNetwork(private val layers: IntArray,  private val initializer: In
             if (verbose) {
                 // Calculate losses on training and validating dataset
                 val validationPrediction = inference(x)
+                val trainingPrediction = inference(X)
                 val validationLoss = lossFunction.forward(yTrue = y, yPrediction = validationPrediction)
-                val validationAccuracy = metric.compute(yTrue = y, yPrediction = validationPrediction)
-                println("Epoch $epoch - Validation Loss ${(validationLoss.element() as Double)} - Validation metric $validationAccuracy")
+                val validationMetric = metric.compute(yTrue = y, yPrediction = validationPrediction)
+                val trainingLoss = lossFunction.forward(yTrue = Y, yPrediction = trainingPrediction)
+                val trainingMetric = metric.compute(yTrue = Y, yPrediction = trainingPrediction)
+                println("Epoch $epoch - Training loss ${(trainingLoss.element() as Double)} - Validation Loss ${(validationLoss.element() as Double)} - Training Metric $trainingMetric - Validation Metric $validationMetric")
 
                 validationLosses.add(validationLoss.element() as Double)
             }
         }
-        return validationLosses
+        val ret = mutableMapOf<String, DoubleArray>()
+        ret["val-loss"] = validationLosses.toDoubleArray()
+        ret["train-loss"] = trainingLosses.toDoubleArray()
+        ret["val-metric"] = validationMetrics.toDoubleArray()
+        ret["train-metric"] = trainingMetrics.toDoubleArray()
+        return ret
     }
 
     /**
