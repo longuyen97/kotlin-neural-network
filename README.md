@@ -1,8 +1,8 @@
 # Neuronal network in Kotlin
 
-Neuronal network is a statistical model where parameters can be updated with back propagation on a target. The implementation 
-in this repository supports following features:
+Neuronal network is a statistical model where parameters can be updated with back propagation on a target. The implementation in this repository has been done with pure Kotlin, the backpropagation was done manually without any help of automatic differentiation framework like `Tensorflow`, `Pytorch` or `Deeplearning4j`. Following features are supported:
 
+- [x] GUI application with Java Swing for interacting with MNIST dataset
 - [x] Regression with MAE loss
 - [x] Classification with sigmoid loss and cross entropy loss
 - [x] Gradient descent optimization
@@ -14,6 +14,11 @@ in this repository supports following features:
 
 The implementation is made mostly for educational purpose to provide some insight into low level programming 
 with neuronal network. For this purpose I implemented the whole network topology with Kotlin/Java.
+
+### Dataset
+- MNIST dataset for number classification
+- Fashion-NIST dataset of Zalando Research for clothes classification
+- Advanced Boston House Price dataset for price regression
 
 ### Dependencies
 - `Apache Commons CSV` for CSV reading.
