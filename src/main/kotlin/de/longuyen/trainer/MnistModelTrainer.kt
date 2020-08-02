@@ -22,12 +22,12 @@ class MnistModelTrainer :
     Serializable {
     private val neuronalNetwork: NeuronalNetwork =
         NeuronalNetwork(
-            intArrayOf(784, 64, 10),
+            intArrayOf(784, 512, 256, 64, 10),
             ChainInitializer(),
             Relu(),
             Softmax(),
             CrossEntropy(),
-            GradientDescent(learningRate = 0.01),
+            GradientDescent(learningRate = 0.025),
             Accuracy()
         )
 
@@ -40,7 +40,7 @@ class MnistModelTrainer :
         val x = testingData.first
         val y = testingData.second
 
-        val history = neuronalNetwork.train(X, Y, x, y, epochs = 1000)
+        val history = neuronalNetwork.train(X, Y, x, y, epochs = 250)
         val xData = DoubleArray(history["val-loss"]!!.size)
         for (i in 0 until history["val-loss"]!!.size) {
             xData[i] = i.toDouble()

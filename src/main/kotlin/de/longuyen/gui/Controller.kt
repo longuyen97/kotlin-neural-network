@@ -72,10 +72,7 @@ class Controller(width: Int, height: Int) {
                     }
                     nativeImageMatrix[y] = doubleArray
                 }
-                val ndarray =
-                    ((Nd4j.createFromArray(nativeImageMatrix).reshape(intArrayOf(784, 1)).castTo(DataType.DOUBLE)).div(
-                        255.0
-                    )).castTo(DataType.DOUBLE)
+                val ndarray = ((Nd4j.createFromArray(nativeImageMatrix).transpose().castTo(DataType.DOUBLE)).div(255.0))
                 val result = Nd4j.argMax(model.inference(ndarray), 0)
                 println(result)
             }
