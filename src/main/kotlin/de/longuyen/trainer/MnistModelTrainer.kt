@@ -3,16 +3,13 @@ package de.longuyen.trainer
 import de.longuyen.data.SupervisedDataGenerator
 import de.longuyen.data.mnist.MnistDataGenerator
 import de.longuyen.neuronalnetwork.NeuronalNetwork
-import de.longuyen.neuronalnetwork.activations.LeakyRelu
 import de.longuyen.neuronalnetwork.activations.Relu
 import de.longuyen.neuronalnetwork.activations.Softmax
 import de.longuyen.neuronalnetwork.initializers.ChainInitializer
 import de.longuyen.neuronalnetwork.losses.CrossEntropy
 import de.longuyen.neuronalnetwork.metrics.Accuracy
-import de.longuyen.neuronalnetwork.optimizers.Adagrad
 import de.longuyen.neuronalnetwork.optimizers.Adam
 import de.longuyen.neuronalnetwork.optimizers.GradientDescent
-import de.longuyen.neuronalnetwork.optimizers.MomentumGradientDescent
 import org.knowm.xchart.BitmapEncoder
 import org.knowm.xchart.XYChart
 import org.knowm.xchart.XYChartBuilder
@@ -30,7 +27,7 @@ class MnistModelTrainer :
             Relu(),
             Softmax(),
             CrossEntropy(),
-            Adam(learningRate = 0.01),
+            GradientDescent(learningRate = 0.01),
             Accuracy()
         )
 
@@ -43,23 +40,23 @@ class MnistModelTrainer :
         val x = testingData.first
         val y = testingData.second
 
-        val losses = neuronalNetwork.train(X, Y, x, y, epochs = 200)
-        val xData = DoubleArray(losses.first.size)
-        for (i in 0 until losses.first.size) {
+        val history = neuronalNetwork.train(X, Y, x, y, epochs = 200)
+        val xData = DoubleArray(history["val-loss"]!!.size)
+        for (i in 0 until history["val-loss"]!!.size) {
             xData[i] = i.toDouble()
         }
-        val yTrain = losses.first.toDoubleArray()
-        val yTest = losses.second.toDoubleArray()
 
         val chart: XYChart = XYChartBuilder()
             .width(1200)
             .height(1200)
             .title("Mnist's performance")
             .xAxisTitle("Training epochs")
-            .yAxisTitle("Model's cross entropy loss")
+            .yAxisTitle("Model's loss and metric")
             .build()
-        chart.addSeries("Training", xData, yTrain)
-        chart.addSeries("Validating", xData, yTest)
+        chart.addSeries("Training loss", xData, history["train-loss"])
+        chart.addSeries("Validating loss", xData, history["val-loss"])
+        chart.addSeries("Training metric", xData, history["train-metric"])
+        chart.addSeries("Validating metric", xData, history["val-metric"])
         BitmapEncoder.saveBitmap(chart, "target/performance", BitmapEncoder.BitmapFormat.PNG)
         FileOutputStream("target/neuronalnetwork.ser").use { fos ->
             ObjectOutputStream(fos).use { oos ->

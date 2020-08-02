@@ -11,6 +11,7 @@ class Adam(private val learningRate: Double, private val alpha: Double=0.1, priv
     private val M = mutableMapOf<String, INDArray>()
     private val R = mutableMapOf<String, INDArray>()
     private var epoch = 1
+
     override fun optimize(weights: MutableMap<String, INDArray>, gradients: MutableMap<String, INDArray>, layers: Int) {
         if(!initialized){
             initialized = true

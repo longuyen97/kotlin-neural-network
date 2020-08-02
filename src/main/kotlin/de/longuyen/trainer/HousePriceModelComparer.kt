@@ -8,6 +8,8 @@ import de.longuyen.neuronalnetwork.activations.NoActivation
 import de.longuyen.neuronalnetwork.initializers.ChainInitializer
 import de.longuyen.neuronalnetwork.losses.MAE
 import de.longuyen.neuronalnetwork.metrics.Accuracy
+import de.longuyen.neuronalnetwork.optimizers.Adagrad
+import de.longuyen.neuronalnetwork.optimizers.Adam
 import de.longuyen.neuronalnetwork.optimizers.GradientDescent
 import de.longuyen.neuronalnetwork.optimizers.MomentumGradientDescent
 import org.knowm.xchart.BitmapEncoder
@@ -16,15 +18,15 @@ import org.knowm.xchart.XYChartBuilder
 import org.nd4j.linalg.indexing.NDArrayIndex
 import java.io.Serializable
 
-class HousePriceModelComparer(layers: IntArray, learningRate: Double, private val epochs: Long) :
+class HousePriceModelComparer(layers: IntArray = intArrayOf(318, 64, 32, 1), learningRate: Double = 0.001, private val epochs: Long = 200) :
     Serializable {
     private val firstNeuronalNetwork: NeuronalNetwork =
         NeuronalNetwork(layers, ChainInitializer(), LeakyRelu(), NoActivation(), MAE(), GradientDescent(learningRate),
-            Accuracy()
+            de.longuyen.neuronalnetwork.metrics.MAE()
         )
     private val secondNeuronalNetwork: NeuronalNetwork =
-        NeuronalNetwork(layers, ChainInitializer(), LeakyRelu(), NoActivation(), MAE(), MomentumGradientDescent(learningRate),
-            Accuracy())
+        NeuronalNetwork(layers, ChainInitializer(), LeakyRelu(), NoActivation(), MAE(), Adam(learningRate),
+            de.longuyen.neuronalnetwork.metrics.MAE())
 
     fun train() {
         val housePriceData: SupervisedDataGenerator = HousePriceDataGenerator()
@@ -35,17 +37,12 @@ class HousePriceModelComparer(layers: IntArray, learningRate: Double, private va
         val X = trainingData.first.get(NDArrayIndex.interval(0, 318), NDArrayIndex.interval(0, 1000))
         val Y = trainingData.second.get(NDArrayIndex.interval(0, 1), NDArrayIndex.interval(0, 1000))
 
-        val firstLosses = firstNeuronalNetwork.train(X, Y, x, y, epochs)
-        val secondLosses = secondNeuronalNetwork.train(X, Y, x, y, epochs)
+        val firstHistory = firstNeuronalNetwork.train(X, Y, x, y, epochs)
+        val secondHistory = secondNeuronalNetwork.train(X, Y, x, y, epochs)
 
-        val firstYTrain = firstLosses.first.toDoubleArray()
-        val firstYTest = firstLosses.second.toDoubleArray()
-        val secondYTrain = secondLosses.first.toDoubleArray()
-        val secondYTest = secondLosses.second.toDoubleArray()
+        val xData = DoubleArray(firstHistory["val-loss"]!!.size)
 
-        val xData = DoubleArray(firstLosses.first.size)
-
-        for (i in 0 until firstLosses.first.size) {
+        for (i in 0 until firstHistory["val-loss"]!!.size) {
             xData[i] = i.toDouble()
         }
         val chart: XYChart = XYChartBuilder()
@@ -55,15 +52,13 @@ class HousePriceModelComparer(layers: IntArray, learningRate: Double, private va
             .xAxisTitle("Training epochs")
             .yAxisTitle("Models' mean absolute error loss")
             .build()
-        chart.addSeries("Gradient descent Training", xData, firstYTrain)
-        chart.addSeries("Gradient descent Validating", xData, firstYTest)
-        chart.addSeries("Momentum driven gradient descent Training", xData, secondYTrain)
-        chart.addSeries("Momentum driven gradient descent Validating", xData, secondYTest)
+        chart.addSeries("Gradient descent Validating loss", xData, firstHistory["val-loss"])
+        chart.addSeries("Adagrad Validating loss", xData, secondHistory["val-loss"])
         BitmapEncoder.saveBitmap(chart, "target/performance", BitmapEncoder.BitmapFormat.PNG)
     }
 }
 
 fun main() {
-    val trainer = HousePriceModelComparer(intArrayOf(318, 32, 1), 0.001, 2000)
+    val trainer = HousePriceModelComparer()
     trainer.train()
 }

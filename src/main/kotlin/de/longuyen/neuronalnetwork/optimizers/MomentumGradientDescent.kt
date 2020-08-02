@@ -14,6 +14,7 @@ class MomentumGradientDescent(private val learningRate: Double, private val mome
                 velocity["vW$i"] = Nd4j.zeros(*weights["W$i"]!!.shape())
                 velocity["vb$i"] = Nd4j.zeros(*weights["b$i"]!!.shape())
             }
+            initialized = true
         }
         for(i in 2 until layers){
             velocity["vW$i"] = velocity["vW$i"]!!.mul(momentum)

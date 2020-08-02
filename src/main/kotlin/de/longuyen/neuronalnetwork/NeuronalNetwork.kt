@@ -67,9 +67,11 @@ class NeuronalNetwork(private val layers: IntArray,  private val initializer: In
      * @param x validating features
      * @param y validating target
      */
-    fun train(X: INDArray, Y: INDArray, x: INDArray, y: INDArray, epochs: Long, verbose: Boolean = true): Pair<MutableList<Double>, MutableList<Double>> {
+    fun train(X: INDArray, Y: INDArray, x: INDArray, y: INDArray, epochs: Long, verbose: Boolean = true): Map<String, DoubleArray> {
         val validationLosses = mutableListOf<Double>()
         val trainingLosses = mutableListOf<Double>()
+        val trainingMetrics = mutableListOf<Double>()
+        val validationMetrics = mutableListOf<Double>()
 
         for (epoch in 0 until epochs) {
             // Forward propagation
@@ -89,10 +91,17 @@ class NeuronalNetwork(private val layers: IntArray,  private val initializer: In
 
                 validationLosses.add(validationLoss.element() as Double)
                 trainingLosses.add(trainingLoss.element() as Double)
+                validationMetrics.add(validationMetric)
+                trainingMetrics.add(trainingMetric)
             }
         }
 
-        return Pair(trainingLosses, validationLosses)
+        val ret = mutableMapOf<String, DoubleArray>()
+        ret["val-loss"] = validationLosses.toDoubleArray()
+        ret["train-loss"] = trainingLosses.toDoubleArray()
+        ret["val-metric"] = validationMetrics.toDoubleArray()
+        ret["train-metric"] = trainingMetrics.toDoubleArray()
+        return ret
     }
 
     /**

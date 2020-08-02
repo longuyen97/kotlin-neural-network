@@ -18,7 +18,7 @@ import java.io.Serializable
 /**
  * Driver code to run a model on the house price data set
  */
-class HousePriceModelTrainer(layers: IntArray, learningRate: Double, private val epochs: Long) :
+class HousePriceModelTrainer(layers: IntArray= intArrayOf(318, 64, 32, 1), learningRate: Double=0.001, private val epochs: Long=2000) :
     Serializable {
     private val neuronalNetwork: NeuronalNetwork =
         NeuronalNetwork(
@@ -28,7 +28,7 @@ class HousePriceModelTrainer(layers: IntArray, learningRate: Double, private val
             NoActivation(),
             MAE(),
             MomentumGradientDescent(learningRate),
-            Accuracy()
+            de.longuyen.neuronalnetwork.metrics.MAE()
         )
 
     fun train() {
@@ -40,28 +40,28 @@ class HousePriceModelTrainer(layers: IntArray, learningRate: Double, private val
         val x = trainingData.first.get(NDArrayIndex.interval(0, 318), NDArrayIndex.interval(1000, 1460))
         val y = trainingData.second.get(NDArrayIndex.interval(0, 1), NDArrayIndex.interval(1000, 1460))
 
-        val losses = neuronalNetwork.train(X, Y, x, y, epochs)
-        val xData = DoubleArray(losses.first.size)
-        for (i in 0 until losses.first.size) {
+        val history = neuronalNetwork.train(X, Y, x, y, epochs)
+        val xData = DoubleArray(history["val-loss"]!!.size)
+        for (i in 0 until history["val-loss"]!!.size) {
             xData[i] = i.toDouble()
         }
-        val yTrain = losses.first.toDoubleArray()
-        val yTest = losses.second.toDoubleArray()
 
         val chart: XYChart = XYChartBuilder()
             .width(1200)
             .height(1200)
             .title("Two-layer-network's performance")
             .xAxisTitle("Training epochs")
-            .yAxisTitle("Model's mean absolute error loss")
+            .yAxisTitle("Model's loss and metric")
             .build()
-        chart.addSeries("Training", xData, yTrain)
-        chart.addSeries("Validating", xData, yTest)
+        chart.addSeries("Training Loss", xData, history["train-loss"])
+        chart.addSeries("Validating Loss", xData, history["val-loss"])
+        chart.addSeries("Training Metric", xData, history["train-metric"])
+        chart.addSeries("Validating Metric", xData, history["val-metric"])
         BitmapEncoder.saveBitmap(chart, "target/performance", BitmapEncoder.BitmapFormat.PNG)
     }
 }
 
 fun main() {
-    val trainer = HousePriceModelTrainer(intArrayOf(318, 32, 1), 0.001, 1000)
+    val trainer = HousePriceModelTrainer()
     trainer.train()
 }
