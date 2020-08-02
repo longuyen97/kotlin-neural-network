@@ -7,6 +7,7 @@ import de.longuyen.neuronalnetwork.activations.LeakyRelu
 import de.longuyen.neuronalnetwork.activations.NoActivation
 import de.longuyen.neuronalnetwork.initializers.ChainInitializer
 import de.longuyen.neuronalnetwork.losses.MAE
+import de.longuyen.neuronalnetwork.metrics.Accuracy
 import de.longuyen.neuronalnetwork.optimizers.MomentumGradientDescent
 import org.knowm.xchart.BitmapEncoder
 import org.knowm.xchart.XYChart
@@ -20,7 +21,15 @@ import java.io.Serializable
 class HousePriceModelTrainer(layers: IntArray, learningRate: Double, private val epochs: Long) :
     Serializable {
     private val neuronalNetwork: NeuronalNetwork =
-        NeuronalNetwork(layers, ChainInitializer(), LeakyRelu(), NoActivation(), MAE(), MomentumGradientDescent(learningRate))
+        NeuronalNetwork(
+            layers,
+            ChainInitializer(),
+            LeakyRelu(),
+            NoActivation(),
+            MAE(),
+            MomentumGradientDescent(learningRate),
+            Accuracy()
+        )
 
     fun train() {
         val housePriceData: SupervisedDataGenerator = HousePriceDataGenerator()

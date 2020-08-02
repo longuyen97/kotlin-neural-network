@@ -4,10 +4,13 @@ import de.longuyen.data.SupervisedDataGenerator
 import de.longuyen.data.mnist.MnistDataGenerator
 import de.longuyen.neuronalnetwork.NeuronalNetwork
 import de.longuyen.neuronalnetwork.activations.LeakyRelu
+import de.longuyen.neuronalnetwork.activations.Relu
 import de.longuyen.neuronalnetwork.activations.Softmax
 import de.longuyen.neuronalnetwork.initializers.ChainInitializer
 import de.longuyen.neuronalnetwork.losses.CrossEntropy
-import de.longuyen.neuronalnetwork.optimizers.MomentumGradientDescent
+import de.longuyen.neuronalnetwork.metrics.Accuracy
+import de.longuyen.neuronalnetwork.optimizers.Adam
+import de.longuyen.neuronalnetwork.optimizers.GradientDescent
 import org.knowm.xchart.BitmapEncoder
 import org.knowm.xchart.XYChart
 import org.knowm.xchart.XYChartBuilder
@@ -16,16 +19,17 @@ import java.io.ObjectOutputStream
 import java.io.Serializable
 
 
-class MnistModelTrainer(layers: IntArray, learningRate: Double, private val epochs: Long) :
+class MnistModelTrainer :
     Serializable {
     private val neuronalNetwork: NeuronalNetwork =
         NeuronalNetwork(
-            layers,
+            intArrayOf(784, 64, 10),
             ChainInitializer(),
-            LeakyRelu(),
+            Relu(),
             Softmax(),
             CrossEntropy(),
-            MomentumGradientDescent(learningRate)
+            GradientDescent(learningRate = 0.001),
+            Accuracy()
         )
 
     fun train() {
@@ -37,7 +41,7 @@ class MnistModelTrainer(layers: IntArray, learningRate: Double, private val epoc
         val x = testingData.first
         val y = testingData.second
 
-        val losses = neuronalNetwork.train(X, Y, x, y, epochs)
+        val losses = neuronalNetwork.train(X, Y, x, y, epochs = 20)
         val xData = DoubleArray(losses.first.size)
         for (i in 0 until losses.first.size) {
             xData[i] = i.toDouble()
@@ -64,6 +68,6 @@ class MnistModelTrainer(layers: IntArray, learningRate: Double, private val epoc
 }
 
 fun main() {
-    val trainer = MnistModelTrainer(intArrayOf(784, 256, 128, 10), 0.00001, 300)
+    val trainer = MnistModelTrainer()
     trainer.train()
 }

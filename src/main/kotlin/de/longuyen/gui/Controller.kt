@@ -1,6 +1,11 @@
 package de.longuyen.gui
 
 import de.longuyen.neuronalnetwork.NeuronalNetwork
+import de.longuyen.neuronalnetwork.activations.LeakyRelu
+import de.longuyen.neuronalnetwork.activations.Softmax
+import de.longuyen.neuronalnetwork.initializers.ChainInitializer
+import de.longuyen.neuronalnetwork.losses.CrossEntropy
+import de.longuyen.neuronalnetwork.optimizers.MomentumGradientDescent
 import org.nd4j.linalg.api.buffer.DataType
 import org.nd4j.linalg.factory.Nd4j
 import java.awt.BorderLayout
@@ -39,7 +44,6 @@ class Controller(width: Int, height: Int) {
         ObjectInputStream(this.javaClass.getResourceAsStream("/models/neuronalnetwork.ser")).use {
             model = it.readObject() as NeuronalNetwork
         }
-
         val mainFrame = JFrame("Neuronal network interaction")
         val mainFrameContainer = mainFrame.contentPane
         mainFrameContainer.layout = BorderLayout()
@@ -60,17 +64,19 @@ class Controller(width: Int, height: Int) {
             } else if (event.source === processButton) {
                 val image = resize(view.getImage(), 28, 28)
                 val nativeImageMatrix = arrayOfNulls<DoubleArray>(28)
-                for(y in 0 until image.height){
+                for (y in 0 until image.height) {
                     val doubleArray = DoubleArray(28)
-                    for(x in 0 until image.width){
+                    for (x in 0 until image.width) {
                         val color = Color(image.getRGB(x, y))
-                        doubleArray[x] = (color.red + color.green + color.blue) / 3.0
+                        doubleArray[x] = 255.0 - ((color.red + color.green + color.blue) / 3.0)
                     }
                     nativeImageMatrix[y] = doubleArray
                 }
-                val ndarray = ((Nd4j.createFromArray(nativeImageMatrix).reshape(intArrayOf(784, 1)).castTo(DataType.DOUBLE)).div(255.0)).castTo(DataType.DOUBLE)
-                println(ndarray)
-                val result = model.inference(ndarray)
+                val ndarray =
+                    ((Nd4j.createFromArray(nativeImageMatrix).reshape(intArrayOf(784, 1)).castTo(DataType.DOUBLE)).div(
+                        255.0
+                    )).castTo(DataType.DOUBLE)
+                val result = Nd4j.argMax(model.inference(ndarray), 0)
                 println(result)
             }
         }

@@ -3,6 +3,7 @@ package de.longuyen.neuronalnetwork
 import de.longuyen.neuronalnetwork.activations.Activation
 import de.longuyen.neuronalnetwork.initializers.Initializer
 import de.longuyen.neuronalnetwork.losses.LossFunction
+import de.longuyen.neuronalnetwork.metrics.Metric
 import de.longuyen.neuronalnetwork.optimizers.Optimizer
 import org.nd4j.linalg.api.ndarray.INDArray
 import org.nd4j.linalg.indexing.NDArrayIndex
@@ -21,7 +22,7 @@ import java.io.Serializable
  *
  * @param lossFunction Determined how the result of the network should be evaluated against a target.
  */
-class NeuronalNetwork(private val layers: IntArray,  private val initializer: Initializer, private val hiddenActivation: Activation, private val lastActivation: Activation, private val lossFunction: LossFunction, private val optimizer: Optimizer) : Serializable {
+class NeuronalNetwork(private val layers: IntArray,  private val initializer: Initializer, private val hiddenActivation: Activation, private val lastActivation: Activation, private val lossFunction: LossFunction, private val optimizer: Optimizer, private val metric: Metric) : Serializable {
     /*
      * Intern parameters of the network
      */
@@ -48,8 +49,10 @@ class NeuronalNetwork(private val layers: IntArray,  private val initializer: In
 
             if (verbose) {
                 // Calculate losses on training and validating dataset
-                val validationLoss = lossFunction.forward(yTrue = y, yPrediction = inference(x))
-                println("Epoch $epoch - Validation Loss ${(validationLoss.element() as Double)}")
+                val validationPrediction = inference(x)
+                val validationLoss = lossFunction.forward(yTrue = y, yPrediction = validationPrediction)
+                val validationAccuracy = metric.compute(yTrue = y, yPrediction = validationPrediction)
+                println("Epoch $epoch - Validation Loss ${(validationLoss.element() as Double)} - Validation metric $validationAccuracy")
 
                 validationLosses.add(validationLoss.element() as Double)
             }
@@ -80,7 +83,9 @@ class NeuronalNetwork(private val layers: IntArray,  private val initializer: In
                 val yPrediction = inference(x)
                 val trainingLoss = lossFunction.forward(yTrue = Y, yPrediction = cache["A$hiddenCount"]!!)
                 val validationLoss = lossFunction.forward(yTrue = y, yPrediction = yPrediction)
-                println("Epoch $epoch - Training loss ${(trainingLoss.element() as Double)} - Validation Loss ${(validationLoss.element() as Double)}")
+                val validationMetric = metric.compute(yTrue = y, yPrediction = yPrediction)
+                val trainingMetric = metric.compute(yTrue = Y, yPrediction =  cache["A$hiddenCount"]!!)
+                println("Epoch $epoch - Training loss ${(trainingLoss.element() as Double)} - Validation Loss ${(validationLoss.element() as Double)} - Training Metric $trainingMetric - Validation Metric $validationMetric")
 
                 validationLosses.add(validationLoss.element() as Double)
                 trainingLosses.add(trainingLoss.element() as Double)
