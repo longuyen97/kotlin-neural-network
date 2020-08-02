@@ -40,7 +40,7 @@ class MnistModelTrainer :
         val x = testingData.first
         val y = testingData.second
 
-        val history = neuronalNetwork.train(X, Y, x, y, epochs = 200)
+        val history = neuronalNetwork.train(X, Y, x, y, epochs = 1000)
         val xData = DoubleArray(history["val-loss"]!!.size)
         for (i in 0 until history["val-loss"]!!.size) {
             xData[i] = i.toDouble()
