@@ -9,8 +9,10 @@ import de.longuyen.neuronalnetwork.activations.Softmax
 import de.longuyen.neuronalnetwork.initializers.ChainInitializer
 import de.longuyen.neuronalnetwork.losses.CrossEntropy
 import de.longuyen.neuronalnetwork.metrics.Accuracy
+import de.longuyen.neuronalnetwork.optimizers.Adagrad
 import de.longuyen.neuronalnetwork.optimizers.Adam
 import de.longuyen.neuronalnetwork.optimizers.GradientDescent
+import de.longuyen.neuronalnetwork.optimizers.MomentumGradientDescent
 import org.knowm.xchart.BitmapEncoder
 import org.knowm.xchart.XYChart
 import org.knowm.xchart.XYChartBuilder
@@ -28,7 +30,7 @@ class MnistModelTrainer :
             Relu(),
             Softmax(),
             CrossEntropy(),
-            GradientDescent(learningRate = 0.001),
+            Adagrad(learningRate = 0.0001),
             Accuracy()
         )
 
@@ -41,7 +43,7 @@ class MnistModelTrainer :
         val x = testingData.first
         val y = testingData.second
 
-        val losses = neuronalNetwork.train(X, Y, x, y, epochs = 20)
+        val losses = neuronalNetwork.train(X, Y, x, y, epochs = 200)
         val xData = DoubleArray(losses.first.size)
         for (i in 0 until losses.first.size) {
             xData[i] = i.toDouble()

@@ -15,4 +15,10 @@ class TestMnistDataGenerator {
         assertTrue { Arrays.equals(testingData.first.shape(), longArrayOf(784, 10000)) }
         assertTrue { Arrays.equals(testingData.second.shape(), longArrayOf(10, 10000)) }
     }
+
+    @Test
+    fun `Test validation data`(){
+        val dataGenerator = MnistDataGenerator()
+        dataGenerator.getTestingData()
+    }
 }
