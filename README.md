@@ -142,3 +142,7 @@ model.train(X, Y, x, y, epochs = 150, batchSize = 32)
 ```
 
 ![](images/003-cross-entropy.png)
+
+# Notes
+- Run `mvn clean package` and run `java -jar target/network-jar-with-dependencies.jar` to interact with the GUI application
+and a pre-trained MNIST model.
