@@ -9,7 +9,7 @@ import java.io.Serializable
  */
 class CrossEntropy : LossFunction(), Serializable {
     companion object {
-        private const val serialVersionUID: Long = 1
+        private const val serialVersionUID: Long = 3107302032578286059
     }
 
     override fun forward(yTrue: INDArray, yPrediction: INDArray): INDArray {

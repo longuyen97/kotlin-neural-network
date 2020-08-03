@@ -10,7 +10,7 @@ import java.io.Serializable
  */
 class Softmax : Activation(), Serializable {
     companion object {
-        private const val serialVersionUID: Long = 1
+        private const val serialVersionUID: Long = 2229419436145416194
     }
 
     override fun forward(x: INDArray): INDArray {

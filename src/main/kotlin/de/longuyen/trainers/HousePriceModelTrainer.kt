@@ -2,10 +2,10 @@ package de.longuyen.trainers
 
 import de.longuyen.data.SupervisedDataGenerator
 import de.longuyen.data.houseprice.HousePriceDataGenerator
-import de.longuyen.neuronalnetwork.DeepNeuronalNetwork
+import de.longuyen.neuronalnetwork.NeuronalNetwork
 import de.longuyen.neuronalnetwork.activations.LeakyRelu
 import de.longuyen.neuronalnetwork.activations.NoActivation
-import de.longuyen.neuronalnetwork.initializers.HeInitializer
+import de.longuyen.neuronalnetwork.initializers.ChainInitializer
 import de.longuyen.neuronalnetwork.losses.MAE
 import de.longuyen.neuronalnetwork.optimizers.MomentumGradientDescent
 import org.knowm.xchart.BitmapEncoder
@@ -23,10 +23,10 @@ class HousePriceModelTrainer(layers: IntArray= intArrayOf(318, 64, 32, 1), learn
         private const val serialVersionUID: Long = 1
     }
 
-    private val deepNeuronalNetwork: DeepNeuronalNetwork =
-        DeepNeuronalNetwork(
+    private val neuronalNetwork: NeuronalNetwork =
+        NeuronalNetwork(
             layers,
-            HeInitializer(),
+            ChainInitializer(),
             LeakyRelu(),
             NoActivation(),
             MAE(),
@@ -43,7 +43,7 @@ class HousePriceModelTrainer(layers: IntArray= intArrayOf(318, 64, 32, 1), learn
         val x = trainingData.first.get(NDArrayIndex.interval(0, 318), NDArrayIndex.interval(1000, 1460))
         val y = trainingData.second.get(NDArrayIndex.interval(0, 1), NDArrayIndex.interval(1000, 1460))
 
-        val history = deepNeuronalNetwork.train(X, Y, x, y, epochs)
+        val history = neuronalNetwork.train(X, Y, x, y, epochs)
         val xData = DoubleArray(history["val-loss"]!!.size)
         for (i in 0 until history["val-loss"]!!.size) {
             xData[i] = i.toDouble()

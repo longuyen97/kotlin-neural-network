@@ -9,7 +9,7 @@ import java.io.Serializable
  */
 class Accuracy : Metric(), Serializable {
     companion object {
-        private const val serialVersionUID: Long = 1
+        private const val serialVersionUID: Long = -231624563005624908
     }
 
     override fun compute(yTrue: INDArray, yPrediction: INDArray): Double {

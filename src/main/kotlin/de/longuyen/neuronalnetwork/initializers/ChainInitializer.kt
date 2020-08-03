@@ -9,9 +9,9 @@ import kotlin.math.sqrt
 /**
  * He initializer
  */
-class HeInitializer : Initializer(), Serializable {
+class ChainInitializer : Initializer(), Serializable {
     companion object {
-        private const val serialVersionUID: Long = 1
+        private const val serialVersionUID: Long = -1720018950602729088
     }
 
     override fun initialize(layers: IntArray): MutableMap<String, INDArray> {

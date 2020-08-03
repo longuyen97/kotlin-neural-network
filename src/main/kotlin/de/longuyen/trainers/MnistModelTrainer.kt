@@ -2,10 +2,10 @@ package de.longuyen.trainers
 
 import de.longuyen.data.SupervisedDataGenerator
 import de.longuyen.data.mnist.MnistDataGenerator
-import de.longuyen.neuronalnetwork.DeepNeuronalNetwork
+import de.longuyen.neuronalnetwork.NeuronalNetwork
 import de.longuyen.neuronalnetwork.activations.Relu
 import de.longuyen.neuronalnetwork.activations.Softmax
-import de.longuyen.neuronalnetwork.initializers.HeInitializer
+import de.longuyen.neuronalnetwork.initializers.ChainInitializer
 import de.longuyen.neuronalnetwork.losses.CrossEntropy
 import de.longuyen.neuronalnetwork.metrics.Accuracy
 import de.longuyen.neuronalnetwork.optimizers.GradientDescent
@@ -23,10 +23,10 @@ class MnistModelTrainer :
         private const val serialVersionUID: Long = 1
     }
 
-    private val deepNeuronalNetwork: DeepNeuronalNetwork =
-        DeepNeuronalNetwork(
+    private val neuronalNetwork: NeuronalNetwork =
+        NeuronalNetwork(
             intArrayOf(784, 32, 16, 10),
-            HeInitializer(),
+            ChainInitializer(),
             Relu(),
             Softmax(),
             CrossEntropy(),
@@ -43,7 +43,7 @@ class MnistModelTrainer :
         val x = testingData.first
         val y = testingData.second
 
-        val history = deepNeuronalNetwork.train(X, Y, x, y, epochs = 150, batchSize = 32)
+        val history = neuronalNetwork.train(X, Y, x, y, epochs = 150, batchSize = 32)
         val xData = DoubleArray(history["val-loss"]!!.size)
         for (i in 0 until history["val-loss"]!!.size) {
             xData[i] = i.toDouble()
@@ -63,7 +63,7 @@ class MnistModelTrainer :
         BitmapEncoder.saveBitmap(chart, "target/performance", BitmapEncoder.BitmapFormat.PNG)
         FileOutputStream("target/neuronalnetwork.ser").use { fos ->
             ObjectOutputStream(fos).use { oos ->
-                oos.writeObject(deepNeuronalNetwork)
+                oos.writeObject(neuronalNetwork)
             }
         }
     }

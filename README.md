@@ -144,5 +144,7 @@ model.train(X, Y, x, y, epochs = 150, batchSize = 32)
 ![](images/003-cross-entropy.png)
 
 # Notes
+- If you want to test the code on your local computer. Run `git clone --depth=1 https://github.com/longuyen97/kotlin-neuronal-network` to avoid 
+cloning everything you don't need. The git repository of this project contains very much useless data.
 - Run `mvn clean package` and run `java -jar target/network-jar-with-dependencies.jar` to interact with the GUI application
 and a pre-trained MNIST model.

@@ -1,49 +1,52 @@
 package de.longuyen.gui
 
-import de.longuyen.neuronalnetwork.DeepNeuronalNetwork
+import de.longuyen.neuronalnetwork.NeuronalNetwork
 import org.nd4j.linalg.api.buffer.DataType
 import org.nd4j.linalg.factory.Nd4j
-import java.awt.BorderLayout
-import java.awt.Color
-import java.awt.Dimension
-import java.awt.Image
+import java.awt.*
 import java.awt.event.ActionEvent
 import java.awt.event.ActionListener
-import java.awt.image.BufferedImage
 import java.io.ObjectInputStream
 import javax.swing.*
 import javax.swing.event.ChangeEvent
 import javax.swing.event.ChangeListener
+import kotlin.math.roundToInt
 
-
-fun resize(img: BufferedImage, newW: Int, newH: Int): BufferedImage {
-    val tmp: Image = img.getScaledInstance(newW, newH, Image.SCALE_SMOOTH)
-    val dimg = BufferedImage(newW, newH, BufferedImage.TYPE_INT_ARGB)
-    val g2d = dimg.createGraphics()
-    g2d.drawImage(tmp, 0, 0, null)
-    g2d.dispose()
-    return dimg
-}
 
 class Controller(width: Int, height: Int) {
     private val view = View()
     private val clearButton = JButton("Clear")
     private val processButton = JButton("Process")
     private val thicknessStat = JLabel("40")
-    private val resultLabel = JLabel("", SwingConstants.CENTER)
     private val thicknessSlider = JSlider(JSlider.HORIZONTAL, 10, 50, 40)
-    private lateinit var model: DeepNeuronalNetwork
+    private lateinit var model: NeuronalNetwork
 
     init {
         ObjectInputStream(this.javaClass.getResourceAsStream("/models/neuronalnetwork.ser")).use {
-            model = it.readObject() as DeepNeuronalNetwork
+            model = it.readObject() as NeuronalNetwork
         }
+
+        // Main frame
         val mainFrame = JFrame("Neuronal network interaction")
         val mainFrameContainer = mainFrame.contentPane
         mainFrameContainer.layout = BorderLayout()
         mainFrameContainer.add(view, BorderLayout.CENTER)
-        mainFrameContainer.add(resultLabel, BorderLayout.SOUTH)
-        val panel = JPanel()
+
+        // Result panel in the south
+        val resultPanel = JPanel(GridLayout(2, 2))
+        val outputDistribution = mutableListOf<JProgressBar>()
+        for(i in 0..9){
+            val progressBar = JProgressBar(0, 100);
+            progressBar.value = 0;
+            progressBar.isStringPainted = true
+            progressBar.string = "$i"
+            outputDistribution.add(progressBar)
+            resultPanel.add(progressBar)
+        }
+        mainFrameContainer.add(resultPanel, BorderLayout.SOUTH)
+
+        // Controlling Panel in the north
+        val controllingPanel = JPanel()
         thicknessSlider.majorTickSpacing = 25
         thicknessSlider.paintTicks = true
         thicknessSlider.preferredSize = Dimension(40, 40)
@@ -69,19 +72,22 @@ class Controller(width: Int, height: Int) {
                 }
                 val ndarray = ((Nd4j.createFromArray(nativeImageMatrix).reshape(intArrayOf(784, 1)).castTo(DataType.DOUBLE)).div(255.0))
                 val result = model.inference(ndarray).mul(100).toDoubleVector()
-                println("Prediction of neuronal network: ")
                 for(i in 0..9){
-                    println("$i: ${result[i]}")
+                    outputDistribution[i].value = result[i].roundToInt()
                 }
             }
         }
+
         processButton.addActionListener(mouseClickedActionListener)
         clearButton.addActionListener(mouseClickedActionListener)
-        panel.add(processButton)
-        panel.add(clearButton)
-        panel.add(thicknessSlider)
-        panel.add(thicknessStat)
-        mainFrameContainer.add(panel, BorderLayout.NORTH)
+
+        controllingPanel.add(processButton)
+        controllingPanel.add(clearButton)
+        controllingPanel.add(thicknessSlider)
+        controllingPanel.add(thicknessStat)
+        mainFrameContainer.add(controllingPanel, BorderLayout.NORTH)
+
+        // Others stuff
         mainFrame.isVisible = true
         mainFrame.setSize(width, height + 11)
         mainFrame.defaultCloseOperation = JFrame.EXIT_ON_CLOSE

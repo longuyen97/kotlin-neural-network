@@ -5,12 +5,7 @@ import javax.swing.UIManager
 import javax.swing.UnsupportedLookAndFeelException
 
 
-@Throws(
-    ClassNotFoundException::class,
-    UnsupportedLookAndFeelException::class,
-    InstantiationException::class,
-    IllegalAccessException::class
-)
+@Throws(ClassNotFoundException::class, UnsupportedLookAndFeelException::class, InstantiationException::class, IllegalAccessException::class)
 fun main() {
     for (info in UIManager.getInstalledLookAndFeels()) {
         if ("Nimbus" == info.name) {

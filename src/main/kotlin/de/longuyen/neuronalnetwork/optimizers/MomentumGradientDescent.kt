@@ -6,7 +6,7 @@ import java.io.Serializable
 
 class MomentumGradientDescent(private val learningRate: Double, private val momentum: Double = 0.9) : Optimizer(), Serializable {
     companion object {
-        private const val serialVersionUID: Long = 1
+        private const val serialVersionUID: Long = -2304272085785646101
     }
     private var initialized = false
     private val velocity = mutableMapOf<String, INDArray>()

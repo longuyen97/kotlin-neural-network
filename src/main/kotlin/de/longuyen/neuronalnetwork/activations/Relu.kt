@@ -10,7 +10,7 @@ import java.io.Serializable
  */
 class Relu : Activation(), Serializable {
     companion object {
-        private const val serialVersionUID: Long = 1
+        private const val serialVersionUID: Long = 1032640494287127350
     }
 
     override fun forward(x: INDArray): INDArray {
