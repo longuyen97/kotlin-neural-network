@@ -19,6 +19,10 @@ import java.io.Serializable
  */
 class HousePriceModelTrainer(layers: IntArray= intArrayOf(318, 64, 32, 1), learningRate: Double=0.001, private val epochs: Long=2000) :
     Serializable {
+    companion object {
+        private const val serialVersionUID: Long = 1
+    }
+
     private val deepNeuronalNetwork: DeepNeuronalNetwork =
         DeepNeuronalNetwork(
             layers,

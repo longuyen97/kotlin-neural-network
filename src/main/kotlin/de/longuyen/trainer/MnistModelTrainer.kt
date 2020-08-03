@@ -19,6 +19,10 @@ import java.io.Serializable
 
 class MnistModelTrainer :
     Serializable {
+    companion object {
+        private const val serialVersionUID: Long = 1
+    }
+
     private val deepNeuronalNetwork: DeepNeuronalNetwork =
         DeepNeuronalNetwork(
             intArrayOf(784, 512, 256, 64, 10),

@@ -15,8 +15,10 @@ import org.knowm.xchart.XYChartBuilder
 import org.nd4j.linalg.indexing.NDArrayIndex
 import java.io.Serializable
 
-class HousePriceModelComparer(layers: IntArray = intArrayOf(318, 64, 32, 1), learningRate: Double = 0.001, private val epochs: Long = 200) :
-    Serializable {
+class HousePriceModelComparer(layers: IntArray = intArrayOf(318, 64, 32, 1), learningRate: Double = 0.001, private val epochs: Long = 200) : Serializable {
+    companion object {
+        private const val serialVersionUID: Long = 1
+    }
     private val firstDeepNeuronalNetwork: DeepNeuronalNetwork =
         DeepNeuronalNetwork(layers, HeInitializer(), LeakyRelu(), NoActivation(), MAE(), GradientDescent(learningRate),
             de.longuyen.neuronalnetwork.metrics.MAE()

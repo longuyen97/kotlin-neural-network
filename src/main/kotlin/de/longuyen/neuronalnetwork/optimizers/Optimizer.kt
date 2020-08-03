@@ -6,6 +6,6 @@ abstract class Optimizer {
     abstract fun optimize(weights: MutableMap<String, INDArray>, gradients: MutableMap<String, INDArray>, layers: Int)
 
     override fun toString(): String {
-        return "Optimizer {${this.javaClass.simpleName}}"
+        return this.javaClass.simpleName
     }
 }

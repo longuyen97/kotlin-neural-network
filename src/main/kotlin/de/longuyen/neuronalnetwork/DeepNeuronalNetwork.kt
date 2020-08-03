@@ -182,6 +182,4 @@ class DeepNeuronalNetwork(private val layers: IntArray, private val initializer:
     override fun toString(): String {
         return "NeuronalNetwork(layers=${layers.contentToString()}, initializer=$initializer, hiddenActivation=$hiddenActivation, lastActivation=$lastActivation, lossFunction=$lossFunction, optimizer=$optimizer)"
     }
-
-
 }
