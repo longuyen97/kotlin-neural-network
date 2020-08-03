@@ -25,7 +25,7 @@ class MnistModelTrainer :
 
     private val deepNeuronalNetwork: DeepNeuronalNetwork =
         DeepNeuronalNetwork(
-            intArrayOf(784, 512, 256, 64, 10),
+            intArrayOf(784, 32, 16, 10),
             HeInitializer(),
             Relu(),
             Softmax(),
