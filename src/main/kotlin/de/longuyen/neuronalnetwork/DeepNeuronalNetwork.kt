@@ -75,6 +75,9 @@ class DeepNeuronalNetwork(private val layers: IntArray, private val initializer:
                 println("Epoch $epoch - Training loss ${(trainingLoss.element() as Double)} - Validation Loss ${(validationLoss.element() as Double)} - Training Metric $trainingMetric - Validation Metric $validationMetric")
 
                 validationLosses.add(validationLoss.element() as Double)
+                trainingLosses.add(trainingLoss.element() as Double)
+                validationMetrics.add(validationMetric)
+                trainingMetrics.add(trainingMetric)
             }
         }
         val ret = mutableMapOf<String, DoubleArray>()
