@@ -2,14 +2,11 @@ package de.longuyen.trainer
 
 import de.longuyen.data.SupervisedDataGenerator
 import de.longuyen.data.houseprice.HousePriceDataGenerator
-import de.longuyen.neuronalnetwork.NeuronalNetwork
+import de.longuyen.neuronalnetwork.DeepNeuronalNetwork
 import de.longuyen.neuronalnetwork.activations.LeakyRelu
 import de.longuyen.neuronalnetwork.activations.NoActivation
-import de.longuyen.neuronalnetwork.initializers.ChainInitializer
+import de.longuyen.neuronalnetwork.initializers.HeInitializer
 import de.longuyen.neuronalnetwork.losses.MAE
-import de.longuyen.neuronalnetwork.metrics.Accuracy
-import de.longuyen.neuronalnetwork.optimizers.Adagrad
-import de.longuyen.neuronalnetwork.optimizers.Adam
 import de.longuyen.neuronalnetwork.optimizers.GradientDescent
 import de.longuyen.neuronalnetwork.optimizers.MomentumGradientDescent
 import org.knowm.xchart.BitmapEncoder
@@ -20,12 +17,12 @@ import java.io.Serializable
 
 class HousePriceModelComparer(layers: IntArray = intArrayOf(318, 64, 32, 1), learningRate: Double = 0.001, private val epochs: Long = 200) :
     Serializable {
-    private val firstNeuronalNetwork: NeuronalNetwork =
-        NeuronalNetwork(layers, ChainInitializer(), LeakyRelu(), NoActivation(), MAE(), GradientDescent(learningRate),
+    private val firstDeepNeuronalNetwork: DeepNeuronalNetwork =
+        DeepNeuronalNetwork(layers, HeInitializer(), LeakyRelu(), NoActivation(), MAE(), GradientDescent(learningRate),
             de.longuyen.neuronalnetwork.metrics.MAE()
         )
-    private val secondNeuronalNetwork: NeuronalNetwork =
-        NeuronalNetwork(layers, ChainInitializer(), LeakyRelu(), NoActivation(), MAE(), MomentumGradientDescent(learningRate),
+    private val secondDeepNeuronalNetwork: DeepNeuronalNetwork =
+        DeepNeuronalNetwork(layers, HeInitializer(), LeakyRelu(), NoActivation(), MAE(), MomentumGradientDescent(learningRate),
             de.longuyen.neuronalnetwork.metrics.MAE())
 
     fun train() {
@@ -37,8 +34,8 @@ class HousePriceModelComparer(layers: IntArray = intArrayOf(318, 64, 32, 1), lea
         val X = trainingData.first.get(NDArrayIndex.interval(0, 318), NDArrayIndex.interval(0, 1000))
         val Y = trainingData.second.get(NDArrayIndex.interval(0, 1), NDArrayIndex.interval(0, 1000))
 
-        val firstHistory = firstNeuronalNetwork.train(X, Y, x, y, epochs)
-        val secondHistory = secondNeuronalNetwork.train(X, Y, x, y, epochs)
+        val firstHistory = firstDeepNeuronalNetwork.train(X, Y, x, y, epochs)
+        val secondHistory = secondDeepNeuronalNetwork.train(X, Y, x, y, epochs)
 
         val xData = DoubleArray(firstHistory["val-loss"]!!.size)
 

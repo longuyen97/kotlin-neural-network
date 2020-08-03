@@ -1,11 +1,6 @@
 package de.longuyen.gui
 
-import de.longuyen.neuronalnetwork.NeuronalNetwork
-import de.longuyen.neuronalnetwork.activations.LeakyRelu
-import de.longuyen.neuronalnetwork.activations.Softmax
-import de.longuyen.neuronalnetwork.initializers.ChainInitializer
-import de.longuyen.neuronalnetwork.losses.CrossEntropy
-import de.longuyen.neuronalnetwork.optimizers.MomentumGradientDescent
+import de.longuyen.neuronalnetwork.DeepNeuronalNetwork
 import org.nd4j.linalg.api.buffer.DataType
 import org.nd4j.linalg.factory.Nd4j
 import java.awt.BorderLayout
@@ -16,7 +11,6 @@ import java.awt.event.ActionEvent
 import java.awt.event.ActionListener
 import java.awt.image.BufferedImage
 import java.io.ObjectInputStream
-import java.util.*
 import javax.swing.*
 import javax.swing.event.ChangeEvent
 import javax.swing.event.ChangeListener
@@ -38,11 +32,11 @@ class Controller(width: Int, height: Int) {
     private val thicknessStat = JLabel("40")
     private val resultLabel = JLabel("", SwingConstants.CENTER)
     private val thicknessSlider = JSlider(JSlider.HORIZONTAL, 10, 50, 40)
-    private lateinit var model: NeuronalNetwork
+    private lateinit var model: DeepNeuronalNetwork
 
     init {
         ObjectInputStream(this.javaClass.getResourceAsStream("/models/neuronalnetwork.ser")).use {
-            model = it.readObject() as NeuronalNetwork
+            model = it.readObject() as DeepNeuronalNetwork
         }
         val mainFrame = JFrame("Neuronal network interaction")
         val mainFrameContainer = mainFrame.contentPane

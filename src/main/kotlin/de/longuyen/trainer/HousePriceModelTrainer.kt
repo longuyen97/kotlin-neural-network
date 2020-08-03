@@ -2,12 +2,11 @@ package de.longuyen.trainer
 
 import de.longuyen.data.SupervisedDataGenerator
 import de.longuyen.data.houseprice.HousePriceDataGenerator
-import de.longuyen.neuronalnetwork.NeuronalNetwork
+import de.longuyen.neuronalnetwork.DeepNeuronalNetwork
 import de.longuyen.neuronalnetwork.activations.LeakyRelu
 import de.longuyen.neuronalnetwork.activations.NoActivation
-import de.longuyen.neuronalnetwork.initializers.ChainInitializer
+import de.longuyen.neuronalnetwork.initializers.HeInitializer
 import de.longuyen.neuronalnetwork.losses.MAE
-import de.longuyen.neuronalnetwork.metrics.Accuracy
 import de.longuyen.neuronalnetwork.optimizers.MomentumGradientDescent
 import org.knowm.xchart.BitmapEncoder
 import org.knowm.xchart.XYChart
@@ -20,10 +19,10 @@ import java.io.Serializable
  */
 class HousePriceModelTrainer(layers: IntArray= intArrayOf(318, 64, 32, 1), learningRate: Double=0.001, private val epochs: Long=2000) :
     Serializable {
-    private val neuronalNetwork: NeuronalNetwork =
-        NeuronalNetwork(
+    private val deepNeuronalNetwork: DeepNeuronalNetwork =
+        DeepNeuronalNetwork(
             layers,
-            ChainInitializer(),
+            HeInitializer(),
             LeakyRelu(),
             NoActivation(),
             MAE(),
@@ -40,7 +39,7 @@ class HousePriceModelTrainer(layers: IntArray= intArrayOf(318, 64, 32, 1), learn
         val x = trainingData.first.get(NDArrayIndex.interval(0, 318), NDArrayIndex.interval(1000, 1460))
         val y = trainingData.second.get(NDArrayIndex.interval(0, 1), NDArrayIndex.interval(1000, 1460))
 
-        val history = neuronalNetwork.train(X, Y, x, y, epochs)
+        val history = deepNeuronalNetwork.train(X, Y, x, y, epochs)
         val xData = DoubleArray(history["val-loss"]!!.size)
         for (i in 0 until history["val-loss"]!!.size) {
             xData[i] = i.toDouble()

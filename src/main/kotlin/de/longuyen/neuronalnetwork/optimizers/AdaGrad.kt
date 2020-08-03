@@ -6,7 +6,14 @@ import org.nd4j.linalg.factory.Nd4j
 import org.nd4j.linalg.ops.transforms.Transforms
 import java.io.Serializable
 
-class Adagrad(private val learningRate: Double, private val eps: Double=0.0001): Optimizer(), Serializable {
+/**
+ * AdaGrad (for adaptive gradient algorithm) is a modified stochastic gradient descent algorithm with per-parameter learning rate.
+ */
+class AdaGrad(private val learningRate: Double, private val eps: Double=0.0001): Optimizer(), Serializable {
+    companion object {
+        private const val serialVersionUID: Long = 1
+    }
+
     private val cache = mutableMapOf<String, INDArray>()
     private var initialized = false
     override fun optimize(weights: MutableMap<String, INDArray>, gradients: MutableMap<String, INDArray>, layers: Int) {

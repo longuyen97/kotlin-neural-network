@@ -5,7 +5,14 @@ import org.nd4j.linalg.factory.Nd4j
 import org.nd4j.linalg.ops.transforms.Transforms
 import java.io.Serializable
 
+/**
+ * Mean absolute squared loss for regression purpose
+ */
 class MAE : LossFunction(), Serializable {
+    companion object {
+        private const val serialVersionUID: Long = 1
+    }
+
     override fun forward(yTrue: INDArray, yPrediction: INDArray): INDArray {
         val diff = yPrediction.sub(yTrue)
         val absolute = Transforms.abs(diff)

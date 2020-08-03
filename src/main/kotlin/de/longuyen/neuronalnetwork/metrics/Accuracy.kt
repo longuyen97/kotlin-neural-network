@@ -4,7 +4,14 @@ import org.nd4j.linalg.api.ndarray.INDArray
 import org.nd4j.linalg.factory.Nd4j
 import java.io.Serializable
 
+/**
+ * Accuracy for classification purpose
+ */
 class Accuracy : Metric(), Serializable {
+    companion object {
+        private const val serialVersionUID: Long = 1
+    }
+
     override fun compute(yTrue: INDArray, yPrediction: INDArray): Double {
         val yTrueArgMax = Nd4j.argMax(yTrue, 0).toDoubleVector()
         val yPredictionArgMax = Nd4j.argMax(yPrediction, 0).toDoubleVector()

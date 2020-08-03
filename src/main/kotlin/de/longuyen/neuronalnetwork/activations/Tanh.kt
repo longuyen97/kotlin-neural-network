@@ -6,19 +6,21 @@ import org.nd4j.linalg.ops.transforms.Transforms
 import java.io.Serializable
 
 /**
- * Sigmoid function for scaling binary output
+ * Tanh activation for hidden layers
  */
-class Sigmoid : Activation(), Serializable{
+class Tanh: Activation(), Serializable{
     companion object {
         private const val serialVersionUID: Long = 1
     }
 
     override fun forward(x: INDArray): INDArray {
-        return Nd4j.ones(*x.shape()).div(Transforms.exp(x, true).add(1))
+        val ez = Transforms.exp(x)
+        val enz = Transforms.exp(x.mul(-1))
+        return (ez.sub(enz)).div(ez.add(enz))
     }
 
     override fun backward(x: INDArray): INDArray {
-        val e = this.forward(x)
-        return e.mul(Nd4j.ones(*x.shape()).sub(e))
+        val tanh = Transforms.tanh(x)
+        return Nd4j.ones(*x.shape()).sub(Transforms.pow(tanh, 2.0))
     }
 }

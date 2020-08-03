@@ -5,7 +5,14 @@ import org.nd4j.linalg.factory.Nd4j
 import org.nd4j.linalg.ops.transforms.Transforms
 import java.io.Serializable
 
-class Softmax : Activation(), Serializable{
+/**
+ * Softmax function for scaling multi class output layer
+ */
+class Softmax : Activation(), Serializable {
+    companion object {
+        private const val serialVersionUID: Long = 1
+    }
+
     override fun forward(x: INDArray): INDArray {
         val e = Transforms.exp(x)
         return e.div(e.sum(true, 0))

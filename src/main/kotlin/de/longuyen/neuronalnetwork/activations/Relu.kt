@@ -4,7 +4,15 @@ import org.nd4j.linalg.api.ndarray.INDArray
 import org.nd4j.linalg.factory.Nd4j
 import java.io.Serializable
 
+/**
+ * Relu function for hidden layers' activation
+ * f(x) = max(0, x)
+ */
 class Relu : Activation(), Serializable {
+    companion object {
+        private const val serialVersionUID: Long = 1
+    }
+
     override fun forward(x: INDArray): INDArray {
         val input: Array<DoubleArray> = x.toDoubleMatrix()
         for(yi in input.indices){

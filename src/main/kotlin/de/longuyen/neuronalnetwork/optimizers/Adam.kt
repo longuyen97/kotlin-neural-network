@@ -6,7 +6,13 @@ import org.nd4j.linalg.ops.transforms.Transforms
 import java.io.Serializable
 import kotlin.math.pow
 
+/**
+ * Adam (short for Adaptive Moment Estimation) is an update to the RMSProp optimizer.
+ */
 class Adam(private val learningRate: Double, private val alpha: Double=0.1, private val eps: Double=0.00000001, private val beta1: Double = 0.9, private val beta2: Double = 0.999): Optimizer(), Serializable{
+    companion object {
+        private const val serialVersionUID: Long = 1
+    }
     private var initialized = false
     private val M = mutableMapOf<String, INDArray>()
     private val R = mutableMapOf<String, INDArray>()

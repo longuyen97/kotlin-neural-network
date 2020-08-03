@@ -4,7 +4,14 @@ import org.nd4j.linalg.api.ndarray.INDArray
 import org.nd4j.linalg.ops.transforms.Transforms
 import java.io.Serializable
 
+/**
+ * Cross entropy loss for classification purpse
+ */
 class CrossEntropy : LossFunction(), Serializable {
+    companion object {
+        private const val serialVersionUID: Long = 1
+    }
+
     override fun forward(yTrue: INDArray, yPrediction: INDArray): INDArray {
         val loss = (yTrue.mul(Transforms.log(yPrediction))).sum(true, 0)
         val negativeLoss = loss.mul(-1)

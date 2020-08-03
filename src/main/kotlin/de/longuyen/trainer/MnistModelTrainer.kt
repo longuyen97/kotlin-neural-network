@@ -2,13 +2,12 @@ package de.longuyen.trainer
 
 import de.longuyen.data.SupervisedDataGenerator
 import de.longuyen.data.mnist.MnistDataGenerator
-import de.longuyen.neuronalnetwork.NeuronalNetwork
+import de.longuyen.neuronalnetwork.DeepNeuronalNetwork
 import de.longuyen.neuronalnetwork.activations.Relu
 import de.longuyen.neuronalnetwork.activations.Softmax
-import de.longuyen.neuronalnetwork.initializers.ChainInitializer
+import de.longuyen.neuronalnetwork.initializers.HeInitializer
 import de.longuyen.neuronalnetwork.losses.CrossEntropy
 import de.longuyen.neuronalnetwork.metrics.Accuracy
-import de.longuyen.neuronalnetwork.optimizers.Adam
 import de.longuyen.neuronalnetwork.optimizers.GradientDescent
 import org.knowm.xchart.BitmapEncoder
 import org.knowm.xchart.XYChart
@@ -20,10 +19,10 @@ import java.io.Serializable
 
 class MnistModelTrainer :
     Serializable {
-    private val neuronalNetwork: NeuronalNetwork =
-        NeuronalNetwork(
+    private val deepNeuronalNetwork: DeepNeuronalNetwork =
+        DeepNeuronalNetwork(
             intArrayOf(784, 512, 256, 64, 10),
-            ChainInitializer(),
+            HeInitializer(),
             Relu(),
             Softmax(),
             CrossEntropy(),
@@ -40,7 +39,7 @@ class MnistModelTrainer :
         val x = testingData.first
         val y = testingData.second
 
-        val history = neuronalNetwork.train(X, Y, x, y, epochs = 250, batchSize = 64)
+        val history = deepNeuronalNetwork.train(X, Y, x, y, epochs = 250, batchSize = 64)
         val xData = DoubleArray(history["val-loss"]!!.size)
         for (i in 0 until history["val-loss"]!!.size) {
             xData[i] = i.toDouble()
@@ -60,7 +59,7 @@ class MnistModelTrainer :
         BitmapEncoder.saveBitmap(chart, "target/performance", BitmapEncoder.BitmapFormat.PNG)
         FileOutputStream("target/neuronalnetwork.ser").use { fos ->
             ObjectOutputStream(fos).use { oos ->
-                oos.writeObject(neuronalNetwork)
+                oos.writeObject(deepNeuronalNetwork)
             }
         }
     }
