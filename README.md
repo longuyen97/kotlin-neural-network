@@ -57,14 +57,11 @@ val model = DeepNeuronalNetwork(
             MomentumGradientDescent(learningRate),
             de.longuyen.neuronalnetwork.metrics.MAE())
 
-val housePriceData: SupervisedDataGenerator = MnistDataGenerator()
-val trainingData = housePriceData.getTrainingData()
-val testingData = housePriceData.getTestingDataWithLabels()
-val X = trainingData.first
-val Y = trainingData.second
-val x = testingData.first
-val y = testingData.second
-
+val housePriceData: SupervisedDataGenerator = HousePriceDataGenerator()
+val X = trainingData.first.get(NDArrayIndex.interval(0, 318), NDArrayIndex.interval(0, 1000))
+val Y = trainingData.second.get(NDArrayIndex.interval(0, 1), NDArrayIndex.interval(0, 1000))
+val x = trainingData.first.get(NDArrayIndex.interval(0, 318), NDArrayIndex.interval(1000, 1460))
+val y = trainingData.second.get(NDArrayIndex.interval(0, 1), NDArrayIndex.interval(1000, 1460))
 
 model.train(X, Y, x, y, epochs = 150, batchSize = 32)
 ```
@@ -79,11 +76,69 @@ decreases over time.
 The same models are replicated, but the the training process is optimized by two different methods. The first one is the vanilla
 gradient descent. The second one memorizes the velocity of past epochs and results into a better result. Both tested on the same data of the [House Price Dataset](https://www.kaggle.com/c/house-prices-advanced-regression-techniques).
 
+The code for the comparision is simple:
+
+```kotlin
+val momentum = DeepNeuronalNetwork(
+            intArrayOf(318, 128, 64, 32, 1),
+            HeInitializer(),
+            LeakyRelu(),
+            NoActivation(),
+            MAE(),
+            MomentumGradientDescent(learningRate),
+            de.longuyen.neuronalnetwork.metrics.MAE())
+
+val vanilla = DeepNeuronalNetwork(
+            intArrayOf(318, 128, 64, 32, 1),
+            HeInitializer(),
+            LeakyRelu(),
+            NoActivation(),
+            MAE(),
+            GradientDescent(learningRate),
+            de.longuyen.neuronalnetwork.metrics.MAE())
+
+val housePriceData: SupervisedDataGenerator = HousePriceDataGenerator()
+val X = trainingData.first.get(NDArrayIndex.interval(0, 318), NDArrayIndex.interval(0, 1000))
+val Y = trainingData.second.get(NDArrayIndex.interval(0, 1), NDArrayIndex.interval(0, 1000))
+val x = trainingData.first.get(NDArrayIndex.interval(0, 318), NDArrayIndex.interval(1000, 1460))
+val y = trainingData.second.get(NDArrayIndex.interval(0, 1), NDArrayIndex.interval(1000, 1460))
+
+momentum.train(X, Y, x, y, epochs = 150, batchSize = 32)
+vanilla.train(X, Y, x, y, epochs = 150, batchSize = 32)
+```
+
+The architecture of both models are almost identical, except for the initial random generated weights. 
+The momentum driven optimizer converges way faster on the house price dataset.
+
 ![](images/002-gradient-descent-and-momentum.png)
 
 ### Performance evaluation for classification
 
 For classification purpose the output of the network will be scaled with a softmax function and the loss is calculated with the cross entropy 
 between the ground truth and the output.
+
+The main difference between MNIST and house price data set is how the last layer is scaled and how the cost is computed.
+
+```kotlin
+val model = DeepNeuronalNetwork(
+            intArrayOf(784, 128, 64, 32, 10),
+            HeInitializer(),
+            LeakyRelu(),
+            NoActivation(),
+            CrossEntropy(),
+            MomentumGradientDescent(learningRate),
+            de.longuyen.neuronalnetwork.metrics.Accuracy())
+
+val mnistData: SupervisedDataGenerator = MnistDataGenerator()
+val trainingData = mnistData.getTrainingData()
+val testingData = mnistData.getTestingDataWithLabels()
+val X = trainingData.first
+val Y = trainingData.second
+val x = testingData.first
+val y = testingData.second
+
+
+model.train(X, Y, x, y, epochs = 150, batchSize = 32)
+```
 
 ![](images/003-cross-entropy.png)
