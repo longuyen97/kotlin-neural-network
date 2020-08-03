@@ -20,7 +20,7 @@ Following features are supported:
 - [x] Adagrad optimization
 - [x] Adam optimization
 - [ ] RMSProp
-- [ ] Nestorov driven gradient descent
+- [x] Nestorov driven gradient descent
 - [ ] Dropping out neuronal network in forward and backward propagation
 - [ ] Recurrent Neuronal Network
 - [ ] Convolutional neuronal network
