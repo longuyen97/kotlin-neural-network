@@ -6,9 +6,11 @@ any help of automatic differentiation framework like `Tensorflow`, `Pytorch` or 
 
 ![](images/000-neuronal-network.png)    
 
+To interact with a pretrained model, a GUI program was written so students can have an interactive learning experience:
+
+![](images/004-gui-program.gif)
+
 Following features are supported:
-
-
 
 - [x] GUI application with Java Swing for interacting with MNIST dataset
 - [x] Regression with MAE loss
