@@ -22,7 +22,7 @@ import java.io.Serializable
  *
  * @param lossFunction Determined how the result of the network should be evaluated against a target.
  */
-class DeepNeuronalNetwork(private val layers: IntArray, private val initializer: Initializer, private val hiddenActivation: Activation, private val lastActivation: Activation, private val lossFunction: LossFunction, private val optimizer: Optimizer, private val metric: Metric) : Serializable {
+class DeepNeuronalNetwork(private val layers: IntArray, private val initializer: Initializer, private val hiddenActivation: Activation, private val lastActivation: Activation, private val lossFunction: LossFunction, private val optimizer: Optimizer, private val metric: Metric) : NeuronalNetwork(), Serializable {
     companion object {
         private const val serialVersionUID: Long = -4270053884763734247
     }
@@ -36,16 +36,26 @@ class DeepNeuronalNetwork(private val layers: IntArray, private val initializer:
      */
     private val hiddenCount = layers.size - 1
 
+
     /**
-     * Minibatch training
+     * Adjusting model's parameters with the given data set.
+     * @param X training features
+     * @param Y training target
+     * @param x validating features
+     * @param y validating target
+     * @param epochs how many epochs should the training take
+     * @param verbose should the model print the current metric?
+     * @param batchSize for faster training
+     * @return history of the training with "val-loss", "train-loss", "val-metric", "train-metric"
      */
-    fun train(X: INDArray, Y: INDArray, x: INDArray, y: INDArray, epochs: Long, batchSize: Long, verbose: Boolean = true): Map<String, DoubleArray>{
+    override fun train(X: INDArray, Y: INDArray, x: INDArray, y: INDArray, epochs: Long, batchSize: Long, verbose: Boolean): Map<String, DoubleArray>{
         val validationLosses = mutableListOf<Double>()
         val trainingLosses = mutableListOf<Double>()
         val trainingMetrics = mutableListOf<Double>()
         val validationMetrics = mutableListOf<Double>()
 
         for (epoch in 0 until epochs) {
+            // Mini batch training
             for (i in 0 until X.shape()[0] step batchSize) {
                 val Xi = X.get(NDArrayIndex.interval(0, x.shape()[0]), NDArrayIndex.interval(i, i + batchSize))
                 val Yi = Y.get(NDArrayIndex.interval(0, y.shape()[0]), NDArrayIndex.interval(i, i + batchSize))
@@ -53,6 +63,7 @@ class DeepNeuronalNetwork(private val layers: IntArray, private val initializer:
                 train(Xi, Yi, Xi, Yi, 1, false)
             }
 
+            // Summarize the epoch
             if (verbose) {
                 // Calculate losses on training and validating dataset
                 val validationPrediction = inference(x)
@@ -80,8 +91,11 @@ class DeepNeuronalNetwork(private val layers: IntArray, private val initializer:
      * @param Y training target
      * @param x validating features
      * @param y validating target
+     * @param epochs how many epochs should the training take
+     * @param verbose should the model print the current metric?
+     * @return history of the training with "val-loss", "train-loss", "val-metric", "train-metric"
      */
-    fun train(X: INDArray, Y: INDArray, x: INDArray, y: INDArray, epochs: Long, verbose: Boolean = true): Map<String, DoubleArray> {
+    override fun train(X: INDArray, Y: INDArray, x: INDArray, y: INDArray, epochs: Long, verbose: Boolean): Map<String, DoubleArray> {
         val validationLosses = mutableListOf<Double>()
         val trainingLosses = mutableListOf<Double>()
         val trainingMetrics = mutableListOf<Double>()
@@ -120,8 +134,10 @@ class DeepNeuronalNetwork(private val layers: IntArray, private val initializer:
 
     /**
      * Forward propagation and return the output of the last layer
+     * @param x features
+     * @return last output of the network
      */
-    fun inference(x: INDArray): INDArray {
+    override fun inference(x: INDArray): INDArray {
         return forward(x)["A$hiddenCount"]!!
     }
 

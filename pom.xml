@@ -91,7 +91,7 @@
                     <!-- MainClass in mainfest make a executable jar -->
                     <archive>
                         <manifest>
-                            <mainClass>de.longuyen.trainer.MnistModelTrainer</mainClass>
+                            <mainClass>de.longuyen.trainers.MnistModelTrainer</mainClass>
                         </manifest>
                     </archive>
 

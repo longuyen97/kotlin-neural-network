@@ -1,4 +1,4 @@
-package de.longuyen.trainer
+package de.longuyen.trainers
 
 import de.longuyen.data.SupervisedDataGenerator
 import de.longuyen.data.houseprice.HousePriceDataGenerator
