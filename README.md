@@ -14,7 +14,7 @@ Error between the output and the groundtruth.
 
 ```kotlin
 
-val momentum = DeepNeuronalNetwork(
+val example = DeepNeuronalNetwork(
             intArrayOf(784, 128, 64, 32, 1),
             HeInitializer(),
             LeakyRelu(),
@@ -42,19 +42,19 @@ Following features are supported:
 - [x] Nestorov driven gradient descent
 
 The implementation is made mostly for educational purpose to provide some insight into low level programming 
-with neural network. For this purpose I implemented the whole network topology with Kotlin/Java.
+with neural network. For this purpose I implemented the whole network topology with Kotlin/Java. The performance is still not that good 
+in comparision to the performance of a Tensorflow's model. But I hope to obtain a deeper understanding of neural network's optimization 
+in my Master.
 
 ### Dataset
 - MNIST dataset for number classification
 - Fashion-NIST dataset of Zalando Research for clothes classification
 - Advanced Boston House Price dataset for price regression
 
-### Dependencies
-- `Apache Commons CSV` for CSV reading.
-- `XChart` for visualization.
-- `Nd4j` for linear algebra.
-
 # Experiments with the implementation
+
+I made some experiments with the implemented neural network to take a better insight into how the model works. Following are some results
+of the experiments which I find particularly interesting. 
 
 ### Comparing positive only initialization with a combination of positive and negative weights
 
