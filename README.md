@@ -2,11 +2,30 @@
 
 Neural network is a statistical model where parameters can be updated with back propagation on a target. 
 The implementation in this repository has been done with pure Kotlin, the backpropagation was done manually without 
-any help of automatic differentiation framework like `Tensorflow`, `Pytorch` or `Deeplearning4j`. 
+any help of automatic differentiation framework like `Tensorflow`, `Pytorch` or `Deeplearning4j`. The topology of the network 
+can be declared arbitrary and be used for any differentiable optimization problems.
 
 ![](images/000-neuronal-network.png)    
 
-To interact with a pretrained model, a GUI program was written so students can have an interactive learning experience:
+The declaration can be simple like this. In this example we declare a simple neural network with 4 hidden layers, each 
+will have its parameters initialized by the He initialization method. The output of each hidden layers will be scaled 
+by the Rectifier Linear Unit. The measure the performance of the network after each training epoch, we use the Mean Absolute 
+Error between the output and the groundtruth. 
+
+```kotlin
+
+val momentum = DeepNeuronalNetwork(
+            intArrayOf(784, 128, 64, 32, 1),
+            HeInitializer(),
+            LeakyRelu(),
+            NoActivation(),
+            MAE(),
+            MomentumGradientDescent(0.001),
+            de.longuyen.neuronalnetwork.metrics.MAE())
+```
+
+To interact with a pretrained model, a GUI program was written so students can have an interactive learning experience. There 
+are two pre-trained models. One for classification purpose and one for autoencoding purpose. 
 
 ![](images/004-gui-program.gif)
 
