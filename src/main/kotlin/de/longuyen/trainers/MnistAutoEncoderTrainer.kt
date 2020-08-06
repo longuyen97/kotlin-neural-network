@@ -4,6 +4,7 @@ import de.longuyen.data.SupervisedDataGenerator
 import de.longuyen.data.mnist.MnistDataGenerator
 import de.longuyen.neuronalnetwork.NeuronalNetwork
 import de.longuyen.neuronalnetwork.activations.LeakyRelu
+import de.longuyen.neuronalnetwork.activations.NoActivation
 import de.longuyen.neuronalnetwork.activations.Softmax
 import de.longuyen.neuronalnetwork.initializers.HeInitializer
 import de.longuyen.neuronalnetwork.initializers.XavierInitializer
@@ -24,12 +25,12 @@ class MnistAutoEncoderTrainer : Serializable {
 
     private val neuronalNetwork: NeuronalNetwork =
         NeuronalNetwork(
-            intArrayOf(784, 512, 256, 512, 784),
+            intArrayOf(784, 512, 256, 128, 256, 512, 784),
             HeInitializer(),
             LeakyRelu(),
-            Softmax(),
+            NoActivation(),
             MAE(),
-            MomentumGradientDescent(learningRate = 0.001),
+            Adam(learningRate = 0.001),
             de.longuyen.neuronalnetwork.metrics.MAE()
         )
 
@@ -40,7 +41,7 @@ class MnistAutoEncoderTrainer : Serializable {
         val X = trainingData.first
         val x = testingData.first
 
-        val history = neuronalNetwork.train(X, X, x, x, epochs = 50, batchSize = 64)
+        val history = neuronalNetwork.train(X, X, x, x, epochs = 50, batchSize = 32)
         val xData = DoubleArray(history["val-loss"]!!.size)
         for (i in 0 until history["val-loss"]!!.size) {
             xData[i] = i.toDouble()

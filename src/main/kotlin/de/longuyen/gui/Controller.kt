@@ -19,11 +19,11 @@ class Controller(width: Int, height: Int) {
     private val processButton = JButton("Process")
     private val thicknessStat = JLabel("40")
     private val thicknessSlider = JSlider(JSlider.HORIZONTAL, 10, 50, 40)
-    private lateinit var model: NeuronalNetwork
+    private lateinit var predictive: NeuronalNetwork
 
     init {
-        ObjectInputStream(this.javaClass.getResourceAsStream("/models/neuronalnetwork.ser")).use {
-            model = it.readObject() as NeuronalNetwork
+        ObjectInputStream(this.javaClass.getResourceAsStream("/models/predictive.ser")).use {
+            predictive = it.readObject() as NeuronalNetwork
         }
 
         // Main frame
@@ -71,7 +71,7 @@ class Controller(width: Int, height: Int) {
                     nativeImageMatrix[y] = doubleArray
                 }
                 val ndarray = ((Nd4j.createFromArray(nativeImageMatrix).reshape(intArrayOf(784, 1)).castTo(DataType.DOUBLE)).div(255.0))
-                val result = model.inference(ndarray).mul(100).toDoubleVector()
+                val result = predictive.inference(ndarray).mul(100).toDoubleVector()
                 for(i in 0..9){
                     outputDistribution[i].value = result[i].roundToInt()
                 }

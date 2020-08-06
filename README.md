@@ -46,6 +46,62 @@ with neuronal network. For this purpose I implemented the whole network topology
 Initial parameters are very important for the performance of a model. An incorrect initialization can makes the gradients exploding
 or vanishing, both are not good for converging.
 
+Implementation of the correct initialization:
+
+```kotlin
+package de.longuyen.neuronalnetwork.initializers
+
+import org.nd4j.linalg.api.buffer.DataType
+import org.nd4j.linalg.api.ndarray.INDArray
+import org.nd4j.linalg.factory.Nd4j
+import java.io.Serializable
+import kotlin.math.sqrt
+
+class HeInitializer : Initializer(), Serializable {
+    companion object {
+        private const val serialVersionUID: Long = -1720018950602729088
+    }
+
+    override fun initialize(layers: IntArray): MutableMap<String, INDArray> {
+        val weights = mutableMapOf<String, INDArray>()
+        for (i in 1 until layers.size) {
+            weights["W$i"] = (Nd4j.randn(*longArrayOf(layers[i].toLong(), layers[i - 1].toLong()))
+                .mul(sqrt(2.0 / layers[i - 1].toDouble()))).castTo(DataType.DOUBLE)
+            weights["b$i"] = Nd4j.zeros(*intArrayOf(layers[i], 1)).castTo(DataType.DOUBLE)
+        }
+        return weights
+    }
+}
+```
+
+Implementation of the positive-only initialization:
+
+```kotlin
+package de.longuyen.neuronalnetwork.initializers
+
+import org.nd4j.linalg.api.buffer.DataType
+import org.nd4j.linalg.api.ndarray.INDArray
+import org.nd4j.linalg.factory.Nd4j
+import java.io.Serializable
+import kotlin.math.sqrt
+
+class PositiveOnlyInitializer : Initializer(), Serializable {
+    companion object {
+        private const val serialVersionUID: Long = -1720018950602729088
+    }
+
+    override fun initialize(layers: IntArray): MutableMap<String, INDArray> {
+        val weights = mutableMapOf<String, INDArray>()
+        for (i in 1 until layers.size) {
+            weights["W$i"] = (Nd4j.rand(*longArrayOf(layers[i].toLong(), layers[i - 1].toLong()))
+                .mul(sqrt(2.0 / layers[i - 1].toDouble()))).castTo(DataType.DOUBLE)
+            weights["b$i"] = Nd4j.zeros(*intArrayOf(layers[i], 1)).castTo(DataType.DOUBLE)
+        }
+        return weights
+    }
+}
+```
+
 ![](images/005-initializers-comparision.png) 
 
 ### Comparing gradient descent with momentum driven gradient descent
