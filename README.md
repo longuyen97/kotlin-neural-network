@@ -1,6 +1,6 @@
-# Neuronal network in Kotlin
+# Neural network and gradient-based optimization in Kotlin
 
-Neuronal network is a statistical model where parameters can be updated with back propagation on a target. 
+Neural network is a statistical model where parameters can be updated with back propagation on a target. 
 The implementation in this repository has been done with pure Kotlin, the backpropagation was done manually without 
 any help of automatic differentiation framework like `Tensorflow`, `Pytorch` or `Deeplearning4j`. 
 
@@ -19,15 +19,11 @@ Following features are supported:
 - [x] Momentum driven gradient descent
 - [x] Adagrad optimization
 - [x] Adam optimization
-- [ ] RMSProp
+- [x] RMSProp
 - [x] Nestorov driven gradient descent
-- [ ] Dropping out neuronal network in forward and backward propagation
-- [ ] Recurrent Neuronal Network
-- [ ] Convolutional neuronal network
-- [ ] Data augmentation
 
 The implementation is made mostly for educational purpose to provide some insight into low level programming 
-with neuronal network. For this purpose I implemented the whole network topology with Kotlin/Java.
+with neural network. For this purpose I implemented the whole network topology with Kotlin/Java.
 
 ### Dataset
 - MNIST dataset for number classification
@@ -213,7 +209,7 @@ model.train(X, Y, x, y, epochs = 150, batchSize = 32)
 
 ### Performance evaluation for regression purpose
 
-The performance validation of the neuronal network was made on the advanced [House Price Dataset](https://www.kaggle.com/c/house-prices-advanced-regression-techniques).
+The performance validation of the neural network was made on the advanced [House Price Dataset](https://www.kaggle.com/c/house-prices-advanced-regression-techniques).
 For the training purpose, the data of the dataset has to be processed. Each discrete column will be one-hot-encoded and each continuous-valued column will be 
 scaled to `[0, 1]`.
 
