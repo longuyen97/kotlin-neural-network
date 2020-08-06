@@ -46,6 +46,8 @@ with neuronal network. For this purpose I implemented the whole network topology
 Initial parameters are very important for the performance of a model. An incorrect initialization can makes the gradients exploding
 or vanishing, both are not good for converging.
 
+![](images/005-initializers-comparision.png) 
+
 Implementation of the correct initialization:
 
 ```kotlin
@@ -101,8 +103,6 @@ class PositiveOnlyInitializer : Initializer(), Serializable {
     }
 }
 ```
-
-![](images/005-initializers-comparision.png) 
 
 ### Comparing gradient descent with momentum driven gradient descent
 
