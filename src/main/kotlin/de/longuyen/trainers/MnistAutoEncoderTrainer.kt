@@ -5,12 +5,9 @@ import de.longuyen.data.mnist.MnistDataGenerator
 import de.longuyen.neuronalnetwork.NeuronalNetwork
 import de.longuyen.neuronalnetwork.activations.LeakyRelu
 import de.longuyen.neuronalnetwork.activations.NoActivation
-import de.longuyen.neuronalnetwork.activations.Softmax
 import de.longuyen.neuronalnetwork.initializers.HeInitializer
-import de.longuyen.neuronalnetwork.initializers.XavierInitializer
 import de.longuyen.neuronalnetwork.losses.MAE
 import de.longuyen.neuronalnetwork.optimizers.Adam
-import de.longuyen.neuronalnetwork.optimizers.MomentumGradientDescent
 import org.knowm.xchart.BitmapEncoder
 import org.knowm.xchart.XYChart
 import org.knowm.xchart.XYChartBuilder
@@ -25,7 +22,7 @@ class MnistAutoEncoderTrainer : Serializable {
 
     private val neuronalNetwork: NeuronalNetwork =
         NeuronalNetwork(
-            intArrayOf(784, 512, 256, 128, 256, 512, 784),
+            intArrayOf(784, 512, 256, 256, 128, 256, 256, 512, 784),
             HeInitializer(),
             LeakyRelu(),
             NoActivation(),
@@ -41,7 +38,7 @@ class MnistAutoEncoderTrainer : Serializable {
         val X = trainingData.first
         val x = testingData.first
 
-        val history = neuronalNetwork.train(X, X, x, x, epochs = 50, batchSize = 32)
+        val history = neuronalNetwork.train(X, X, x, x, epochs = 15, batchSize = 8)
         val xData = DoubleArray(history["val-loss"]!!.size)
         for (i in 0 until history["val-loss"]!!.size) {
             xData[i] = i.toDouble()

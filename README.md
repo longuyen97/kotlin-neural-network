@@ -145,6 +145,41 @@ The momentum driven optimizer converges way faster on the house price dataset.
 
 ![](images/002-gradient-descent-and-momentum.png)
 
+### Performance evaluation for autoencoder
+
+An autoencoder is a type of artificial neural network used to learn efficient data codings in an unsupervised manner.
+The aim of an autoencoder is to learn a representation (encoding) for a set of data, typically for dimensionality reduction, 
+by training the network to ignore signal “noise”. Along with the reduction side, a reconstructing side is learnt, where 
+the autoencoder tries to generate from the reduced encoding a representation as close as possible to its original input, 
+hence its name. Several variants exist to the basic model, with the aim of forcing the learned representations of the 
+input to assume useful properties.
+
+Examples are the regularized autoencoders (Sparse, Denoising and Contractive autoencoders), proven effective in learning
+representations for subsequent classification tasks,[3] and Variational autoencoders, with their recent applications as generative models.
+Autoencoders are effectively used for solving many applied problems, from face recognition to acquiring the semantic meaning of words.
+
+![](images/006-autoencoder.png)
+
+```kotlin
+val model = DeepNeuronalNetwork(
+            intArrayOf(784, 512, 256, 256, 128, 256, 256, 512, 784),
+            HeInitializer(),
+            LeakyRelu(),
+            NoActivation(),
+            MAE(),
+            Adam(0.0001),
+            de.longuyen.neuronalnetwork.metrics.MAE())
+
+val mnistData: SupervisedDataGenerator = MnistDataGenerator()
+val trainingData = mnistData.getTrainingData()
+val testingData = mnistData.getTestingDataWithLabels()
+val X = trainingData.first
+val x = testingData.first
+
+
+model.train(X, X, x, x, epochs = 150, batchSize = 32)
+```
+
 ### Performance evaluation for classification
 
 For classification purpose the output of the network will be scaled with a softmax function and the loss is calculated with the cross entropy 

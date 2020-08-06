@@ -36,6 +36,11 @@ class View : JComponent() {
         repaint()
     }
 
+    fun setImage(image: BufferedImage){
+        this.image.data = image.data
+        repaint()
+    }
+
     fun setThickness(thick: Int) {
         globalGraphics.stroke = BasicStroke(thick.toFloat())
     }
