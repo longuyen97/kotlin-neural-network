@@ -41,37 +41,12 @@ with neuronal network. For this purpose I implemented the whole network topology
 
 # Experiments with the implementation
 
-### Performance evaluation for regression purpos
+### Comparing positive only initialization with a combination of positive and negative weights
 
-The performance validation of the neuronal network was made on the advanced [House Price Dataset](https://www.kaggle.com/c/house-prices-advanced-regression-techniques).
-For the training purpose, the data of the dataset has to be processed. Each discrete column will be one-hot-encoded and each continuous-valued column will be 
-scaled to `[0, 1]`.
+Initial parameters are very important for the performance of a model. An incorrect initialization can makes the gradients exploding
+or vanishing, both are not good for converging.
 
-The structure of the model in Kotlin and the training look like following
-
-```kotlin
-val model = DeepNeuronalNetwork(
-            intArrayOf(318, 128, 64, 32, 1),
-            HeInitializer(),
-            LeakyRelu(),
-            NoActivation(),
-            MAE(),
-            MomentumGradientDescent(learningRate),
-            de.longuyen.neuronalnetwork.metrics.MAE())
-
-val housePriceData: SupervisedDataGenerator = HousePriceDataGenerator()
-val X = trainingData.first.get(NDArrayIndex.interval(0, 318), NDArrayIndex.interval(0, 1000))
-val Y = trainingData.second.get(NDArrayIndex.interval(0, 1), NDArrayIndex.interval(0, 1000))
-val x = trainingData.first.get(NDArrayIndex.interval(0, 318), NDArrayIndex.interval(1000, 1460))
-val y = trainingData.second.get(NDArrayIndex.interval(0, 1), NDArrayIndex.interval(1000, 1460))
-
-model.train(X, Y, x, y, epochs = 150, batchSize = 32)
-```
-
-The training takes place with momentum driven gradient descent, the graphic shows how the cost of the model 
-decreases over time.
-
-![](images/001-gradient-descent.png)
+![](images/005-initializers-comparision.png) 
 
 ### Comparing gradient descent with momentum driven gradient descent
 
@@ -144,6 +119,38 @@ model.train(X, Y, x, y, epochs = 150, batchSize = 32)
 ```
 
 ![](images/003-cross-entropy.png)
+
+### Performance evaluation for regression purpose
+
+The performance validation of the neuronal network was made on the advanced [House Price Dataset](https://www.kaggle.com/c/house-prices-advanced-regression-techniques).
+For the training purpose, the data of the dataset has to be processed. Each discrete column will be one-hot-encoded and each continuous-valued column will be 
+scaled to `[0, 1]`.
+
+The structure of the model in Kotlin and the training look like following
+
+```kotlin
+val model = DeepNeuronalNetwork(
+            intArrayOf(318, 128, 64, 32, 1),
+            HeInitializer(),
+            LeakyRelu(),
+            NoActivation(),
+            MAE(),
+            MomentumGradientDescent(learningRate),
+            de.longuyen.neuronalnetwork.metrics.MAE())
+
+val housePriceData: SupervisedDataGenerator = HousePriceDataGenerator()
+val X = trainingData.first.get(NDArrayIndex.interval(0, 318), NDArrayIndex.interval(0, 1000))
+val Y = trainingData.second.get(NDArrayIndex.interval(0, 1), NDArrayIndex.interval(0, 1000))
+val x = trainingData.first.get(NDArrayIndex.interval(0, 318), NDArrayIndex.interval(1000, 1460))
+val y = trainingData.second.get(NDArrayIndex.interval(0, 1), NDArrayIndex.interval(1000, 1460))
+
+model.train(X, Y, x, y, epochs = 150, batchSize = 32)
+```
+
+The training takes place with momentum driven gradient descent, the graphic shows how the cost of the model 
+decreases over time.
+
+![](images/001-gradient-descent.png)
 
 # Notes
 - If you want to test the code on your local computer. Run `git clone --depth=1 https://github.com/longuyen97/kotlin-neuronal-network` to avoid 

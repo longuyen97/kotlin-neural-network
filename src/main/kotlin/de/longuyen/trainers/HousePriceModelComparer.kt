@@ -5,7 +5,7 @@ import de.longuyen.data.houseprice.HousePriceDataGenerator
 import de.longuyen.neuronalnetwork.NeuronalNetwork
 import de.longuyen.neuronalnetwork.activations.LeakyRelu
 import de.longuyen.neuronalnetwork.activations.NoActivation
-import de.longuyen.neuronalnetwork.initializers.ChainInitializer
+import de.longuyen.neuronalnetwork.initializers.HeInitializer
 import de.longuyen.neuronalnetwork.losses.MAE
 import de.longuyen.neuronalnetwork.optimizers.GradientDescent
 import de.longuyen.neuronalnetwork.optimizers.MomentumGradientDescent
@@ -20,11 +20,11 @@ class HousePriceModelComparer(layers: IntArray = intArrayOf(318, 64, 32, 1), lea
         private const val serialVersionUID: Long = 1
     }
     private val firstNeuronalNetwork: NeuronalNetwork =
-        NeuronalNetwork(layers, ChainInitializer(), LeakyRelu(), NoActivation(), MAE(), GradientDescent(learningRate),
+        NeuronalNetwork(layers, HeInitializer(), LeakyRelu(), NoActivation(), MAE(), GradientDescent(learningRate),
             de.longuyen.neuronalnetwork.metrics.MAE()
         )
     private val secondNeuronalNetwork: NeuronalNetwork =
-        NeuronalNetwork(layers, ChainInitializer(), LeakyRelu(), NoActivation(), MAE(), MomentumGradientDescent(learningRate),
+        NeuronalNetwork(layers, HeInitializer(), LeakyRelu(), NoActivation(), MAE(), MomentumGradientDescent(learningRate),
             de.longuyen.neuronalnetwork.metrics.MAE())
 
     fun train() {

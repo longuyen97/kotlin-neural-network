@@ -3,12 +3,13 @@ package de.longuyen.trainers
 import de.longuyen.data.SupervisedDataGenerator
 import de.longuyen.data.mnist.MnistDataGenerator
 import de.longuyen.neuronalnetwork.NeuronalNetwork
-import de.longuyen.neuronalnetwork.activations.Relu
+import de.longuyen.neuronalnetwork.activations.LeakyRelu
 import de.longuyen.neuronalnetwork.activations.Softmax
-import de.longuyen.neuronalnetwork.initializers.ChainInitializer
+import de.longuyen.neuronalnetwork.initializers.HeInitializer
+import de.longuyen.neuronalnetwork.initializers.XavierInitializer
 import de.longuyen.neuronalnetwork.losses.CrossEntropy
 import de.longuyen.neuronalnetwork.metrics.Accuracy
-import de.longuyen.neuronalnetwork.optimizers.GradientDescent
+import de.longuyen.neuronalnetwork.optimizers.Adam
 import org.knowm.xchart.BitmapEncoder
 import org.knowm.xchart.XYChart
 import org.knowm.xchart.XYChartBuilder
@@ -25,12 +26,12 @@ class MnistModelTrainer :
 
     private val neuronalNetwork: NeuronalNetwork =
         NeuronalNetwork(
-            intArrayOf(784, 32, 16, 10),
-            ChainInitializer(),
-            Relu(),
+            intArrayOf(784, 512, 256, 128, 64, 32, 10),
+            XavierInitializer(),
+            LeakyRelu(),
             Softmax(),
             CrossEntropy(),
-            GradientDescent(learningRate = 0.025),
+            Adam(learningRate = 0.001),
             Accuracy()
         )
 
@@ -43,7 +44,7 @@ class MnistModelTrainer :
         val x = testingData.first
         val y = testingData.second
 
-        val history = neuronalNetwork.train(X, Y, x, y, epochs = 150, batchSize = 32)
+        val history = neuronalNetwork.train(X, Y, x, y, epochs = 50, batchSize = 16)
         val xData = DoubleArray(history["val-loss"]!!.size)
         for (i in 0 until history["val-loss"]!!.size) {
             xData[i] = i.toDouble()

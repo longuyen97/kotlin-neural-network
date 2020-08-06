@@ -5,7 +5,7 @@ import de.longuyen.data.houseprice.HousePriceDataGenerator
 import de.longuyen.neuronalnetwork.NeuronalNetwork
 import de.longuyen.neuronalnetwork.activations.LeakyRelu
 import de.longuyen.neuronalnetwork.activations.NoActivation
-import de.longuyen.neuronalnetwork.initializers.ChainInitializer
+import de.longuyen.neuronalnetwork.initializers.HeInitializer
 import de.longuyen.neuronalnetwork.losses.MAE
 import de.longuyen.neuronalnetwork.optimizers.MomentumGradientDescent
 import org.knowm.xchart.BitmapEncoder
@@ -26,7 +26,7 @@ class HousePriceModelTrainer(layers: IntArray= intArrayOf(318, 64, 32, 1), learn
     private val neuronalNetwork: NeuronalNetwork =
         NeuronalNetwork(
             layers,
-            ChainInitializer(),
+            HeInitializer(),
             LeakyRelu(),
             NoActivation(),
             MAE(),
