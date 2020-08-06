@@ -155,7 +155,7 @@ hence its name. Several variants exist to the basic model, with the aim of forci
 input to assume useful properties.
 
 Examples are the regularized autoencoders (Sparse, Denoising and Contractive autoencoders), proven effective in learning
-representations for subsequent classification tasks,[3] and Variational autoencoders, with their recent applications as generative models.
+representations for subsequent classification tasks, and Variational autoencoders, with their recent applications as generative models.
 Autoencoders are effectively used for solving many applied problems, from face recognition to acquiring the semantic meaning of words.
 
 ![](images/006-autoencoder.png)
