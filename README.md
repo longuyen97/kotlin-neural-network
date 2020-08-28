@@ -1,4 +1,4 @@
-# Neural network and gradient-based optimization in Kotlin
+## Neural network and gradient-based optimization in Kotlin
 
 Neural network is a statistical model where parameters can be updated with back propagation on a target. 
 The implementation in this repository has been done with pure Kotlin, the backpropagation was done manually without 
@@ -29,6 +29,8 @@ are two pre-trained models. One for classification purpose and one for autoencod
 
 ![](images/004-gui-program.gif)
 
+##### Some implemented features
+
 Following features are supported:
 
 - [x] GUI application with Java Swing for interacting with MNIST dataset
@@ -46,17 +48,19 @@ with neural network. For this purpose I implemented the whole network topology w
 in comparision to the performance of a Tensorflow's model. But I hope to obtain a deeper understanding of neural network's optimization 
 in my Master.
 
-### Dataset
+##### Dataset
 - MNIST dataset for number classification
 - Fashion-NIST dataset of Zalando Research for clothes classification
 - Advanced Boston House Price dataset for price regression
 
-# Experiments with the implementation
+---
+
+## Experiments with the implementation
 
 I made some experiments with the implemented neural network to take a better insight into how the model works. Following are some results
 of the experiments which I find particularly interesting. 
 
-### Comparing positive only initialization with a combination of positive and negative weights
+##### Comparing positive only initialization with a combination of positive and negative weights
 
 Initial parameters are very important for the performance of a model. An incorrect initialization can makes the gradients exploding
 or vanishing, both are not good for converging.
@@ -119,7 +123,7 @@ class PositiveOnlyInitializer : Initializer(), Serializable {
 }
 ```
 
-### Comparing gradient descent with momentum driven gradient descent
+##### Comparing gradient descent with momentum driven gradient descent
 
 The same models are replicated, but the the training process is optimized by two different methods. The first one is the vanilla
 gradient descent. The second one memorizes the velocity of past epochs and results into a better result. Both tested on the same data of the [House Price Dataset](https://www.kaggle.com/c/house-prices-advanced-regression-techniques).
@@ -160,7 +164,7 @@ The momentum driven optimizer converges way faster on the house price dataset.
 
 ![](images/002-gradient-descent-and-momentum.png)
 
-### Performance evaluation for autoencoder
+##### Performance evaluation for autoencoder
 
 An autoencoder is a type of artificial neural network used to learn efficient data codings in an unsupervised manner.
 The aim of an autoencoder is to learn a representation (encoding) for a set of data, typically for dimensionality reduction, 
@@ -195,7 +199,7 @@ val x = testingData.first
 model.train(X, X, x, x, epochs = 150, batchSize = 32)
 ```
 
-### Performance evaluation for classification
+##### Performance evaluation for classification
 
 For classification purpose the output of the network will be scaled with a softmax function and the loss is calculated with the cross entropy 
 between the ground truth and the output.
@@ -226,7 +230,7 @@ model.train(X, Y, x, y, epochs = 150, batchSize = 32)
 
 ![](images/003-cross-entropy.png)
 
-### Performance evaluation for regression purpose
+##### Performance evaluation for regression purpose
 
 The performance validation of the neural network was made on the advanced [House Price Dataset](https://www.kaggle.com/c/house-prices-advanced-regression-techniques).
 For the training purpose, the data of the dataset has to be processed. Each discrete column will be one-hot-encoded and each continuous-valued column will be 
@@ -258,7 +262,7 @@ decreases over time.
 
 ![](images/001-gradient-descent.png)
 
-# Notes
+## Notes
 - If you want to test the code on your local computer. Run `git clone --depth=1 https://github.com/longuyen97/kotlin-neuronal-network` to avoid 
 cloning everything you don't need. The git repository of this project contains very much useless data.
 - Run `mvn clean package` and run `java -jar target/network-jar-with-dependencies.jar` to interact with the GUI application
