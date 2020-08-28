@@ -10,8 +10,8 @@ are two pre-trained models. One for classification purpose and one for autoencod
 
 <table border="1" width="100%">
     <tr>
-        <td><img src="images/000-neuronal-network.png" width="150px"></td>
-        <td><img src="images/004-gui-program.gif" width="150px"></td>
+        <td><img src="images/000-neuronal-network.png" width="350px"></td>
+        <td><img src="images/004-gui-program.gif" width="350px"></td>
     </tr>
 </table> 
 
