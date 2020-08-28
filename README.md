@@ -5,7 +5,15 @@ The implementation in this repository has been done with pure Kotlin, the backpr
 any help of automatic differentiation framework like `Tensorflow`, `Pytorch` or `Deeplearning4j`. The topology of the network 
 can be declared arbitrary and be used for any differentiable optimization problems.
 
-![](images/000-neuronal-network.png)    
+To interact with a pretrained model, a GUI program was written so students can have an interactive learning experience. There 
+are two pre-trained models. One for classification purpose and one for autoencoding purpose. 
+
+<table border="1" width="100%">
+    <tr>
+        <td><img src="images/000-neuronal-network.png" width="150px"></td>
+        <td><img src="images/004-gui-program.gif" width="150px"></td>
+    </tr>
+</table> 
 
 The declaration can be simple like this. In this example we declare a simple neural network with 4 hidden layers, each 
 will have its parameters initialized by the He initialization method. The output of each hidden layers will be scaled 
@@ -23,11 +31,6 @@ val example = DeepNeuronalNetwork(
             MomentumGradientDescent(0.001),
             de.longuyen.neuronalnetwork.metrics.MAE())
 ```
-
-To interact with a pretrained model, a GUI program was written so students can have an interactive learning experience. There 
-are two pre-trained models. One for classification purpose and one for autoencoding purpose. 
-
-![](images/004-gui-program.gif)
 
 ##### Some implemented features
 
